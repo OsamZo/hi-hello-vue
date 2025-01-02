@@ -1,62 +1,69 @@
 <template>
   <div class="chat-container">
-    <!-- 메시지 목록 -->
-    <div ref="messagesContainer" class="messages">
-      <div
-          v-for="(msg, index) in messages"
-          :key="index"
-          class="message"
-          :class="{
-            'message-right': msg.userCode === Number(currentUserCode.trim()),
-            'message-left': msg.userCode !== Number(currentUserCode.trim())
-          }">
-        <div class="chat-name">
-          {{ msg.userName }}
-          <div class="chat-date">{{ msg.createdAt }}</div>
-        </div>
-        <div class="chat-message-content">{{ msg.message }}</div>
-      </div>
+    <!-- 채팅방 존재 여부 체크 -->
+    <div v-if="!roomId" class="no-chat-room">
+      <p>유효한 채팅방을 선택하세요.</p>
     </div>
+    <div v-else>
+      <!-- 메시지 목록 -->
+      <div ref="messagesContainer" class="messages">
+        <div
+            v-for="(msg, index) in messages"
+            :key="index"
+            class="message"
+            :class="{
+          'message-right': msg.userCode === Number(currentUserCode.trim()),
+          'message-left': msg.userCode !== Number(currentUserCode.trim())
+        }">
+          <div class="chat-name">
+            {{ msg.userName }}
+            <div class="chat-date">{{ msg.createdAt }}</div>
+          </div>
+          <div class="chat-message-content">{{ msg.message }}</div>
+        </div>
+      </div>
 
-    <!-- 메시지 입력란 -->
-    <div class="input-container">
-      <input
-          type="text"
-          v-model="messageContent"
-          placeholder="메시지를 입력하세요"
-          @keyup.enter="sendMessage"
-      />
-      <button @click="sendMessage" :disabled="!connected">보내기</button>
+      <!-- 메시지 입력란 -->
+      <div class="input-container">
+        <input
+            type="text"
+            v-model="messageContent"
+            placeholder="메시지를 입력하세요"
+            @keyup.enter="sendMessage"
+        />
+        <button @click="sendMessage" :disabled="!connected">보내기</button>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, watch, nextTick, defineProps } from 'vue';
+import { ref, onMounted, onBeforeUnmount, watch } from 'vue';
 import { Client } from "@stomp/stompjs";
 import { useUserStore } from "@/stores/UserStore.js";
 import { getChatMessages } from "@/services/ChatApi.js";
 
+// Props 정의
 const props = defineProps({
-  chatRoomSeq: String,  // prop에서 roomSeq 값을 받습니다.
+  chatRoomSeq: String, // 부모로부터 전달받는 채팅방 ID
 });
 
-// 상태 관리
+// 상태 관리 변수 선언
 const stompClient = ref(null);
 const messages = ref([]);
 const messageContent = ref("");
-const roomId = ref(props.chatRoomSeq);
-const socketUrl = "ws://localhost:5000/ws"; // WebSocket URL
+const roomId = ref(null); // 초기 값은 null
 const connected = ref(false);
 const currentUserCode = useUserStore().getEmployeeInfo().employeeSeq;
+const socketUrl = import.meta.env.VITE_API_CHAT_URL; // WebSocket URL
 
-// WebSocket 연결 함수
+// WebSocket 연결
 const connect = () => {
   const authStore = useUserStore();
   const token = authStore.accessToken;
 
   if (!roomId.value) {
-    console.error("roomId가 누락되었습니다.");
+    console.log("roomId가 누락되었습니다.");
     return;
   }
 
@@ -65,7 +72,6 @@ const connect = () => {
     return;
   }
 
-  // STOMP 클라이언트 설정
   stompClient.value = new Client({
     brokerURL: socketUrl,
     connectHeaders: {
@@ -78,7 +84,7 @@ const connect = () => {
 
   stompClient.value.onConnect = () => {
     connected.value = true;
-    subscribeToChat(); // 채팅 방 구독 시작
+    subscribeToChat(); // 채팅 구독 시작
   };
 
   stompClient.value.onStompError = (frame) => {
@@ -86,14 +92,10 @@ const connect = () => {
     connected.value = false;
   };
 
-  stompClient.value.onDisconnect = () => {
-    connected.value = false;
-  };
-
   stompClient.value.activate();
 };
 
-// 채팅방 구독을 시작하는 함수
+// 메시지 구독
 const subscribeToChat = () => {
   if (!stompClient.value || !roomId.value) {
     console.error("STOMP Client 또는 Room ID가 없습니다.");
@@ -110,7 +112,7 @@ const subscribeToChat = () => {
   });
 };
 
-// 메시지 수신 처리
+// 수신 메시지 처리
 const handleIncomingMessage = (message) => {
   messages.value.push({
     message: message.message,
@@ -120,20 +122,16 @@ const handleIncomingMessage = (message) => {
   });
 };
 
-// 메시지 전송 처리
+// 메시지 전송
 const sendMessage = () => {
-  if (!messageContent.value.trim()) {
-    console.log("빈 메시지 전송 시도는 무시됩니다.");
-    return;
-  }
+  if (!messageContent.value.trim()) return;
 
   const authStore = useUserStore();
   const token = authStore.accessToken;
-  const employeeSeq = currentUserCode;
 
   const message = {
-    roomId: roomId.value,  // roomId를 .value로 사용
-    userCode: employeeSeq,
+    roomId: roomId.value,
+    userCode: currentUserCode,
     message: messageContent.value,
     createdAt: new Date().toISOString(),
   };
@@ -142,12 +140,10 @@ const sendMessage = () => {
     stompClient.value.publish({
       destination: `/pub/${roomId.value}`,
       body: JSON.stringify(message),
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: { Authorization: `Bearer ${token}` },
     });
 
-    messageContent.value = "";
+    messageContent.value = ""; // 입력창 초기화
   }
 };
 
@@ -156,63 +152,56 @@ const disconnect = () => {
   if (stompClient.value) {
     stompClient.value.deactivate();
     connected.value = false;
-    console.log("연결 해제");
   }
 };
 
-// 채팅 메시지 목록 가져오기
+// 채팅 메시지 목록 불러오기
 const getChatMessageList = async () => {
   try {
-    console.log("현재 roomId 값은:", roomId.value);
+    if (!roomId.value) {
+      console.log("유효하지 않은 roomId로 메시지를 조회할 수 없습니다.");
+      return;
+    }
 
-    // 이전 메시지 초기화
-    messages.value = [];
-
-    const response = await getChatMessages(roomId.value);  // roomId.value로 API 호출
-
+    const response = await getChatMessages(roomId.value);
     if (response && response.data) {
-      messages.value = response.data.map(msg => ({
-        ...msg,
-        userCode: msg.userCode,
-      }));
-    } else {
-      messages.value = [];
+      messages.value = response.data.map(msg => ({ ...msg }));
     }
   } catch (error) {
-    console.error("채팅 조회 오류:", error);
+    console.error("채팅 메시지 불러오기 실패:", error);
     messages.value = [];
   }
 };
 
-// 채팅방 변경 시 roomId 업데이트
-watch(() => roomId.value, async (newRoomId, oldRoomId) => {
-  if (newRoomId !== oldRoomId) {
-    console.log("roomId 값이 변경되었습니다:", newRoomId);
+// Props의 chatRoomSeq 변경 감지
+watch(() => props.chatRoomSeq, async (newChatRoomSeq, oldChatRoomSeq) => {
+  if (newChatRoomSeq) {
+    roomId.value = newChatRoomSeq; // roomId 업데이트
+    console.log("chatRoomSeq 변경:", newChatRoomSeq);
 
-    // 기존 WebSocket 연결 해제 및 데이터 초기화
-    disconnect();  // 기존 연결 종료
-
-    // 메시지 리스트를 비우고 채팅 데이터를 가져옵니다.
-    messages.value = [];
-    await getChatMessageList();  // 새로운 roomId로 데이터 불러오기
-
-    connect();  // 새로운 roomId에 대해 WebSocket 연결 시작
+    disconnect(); // 기존 WebSocket 연결 해제
+    messages.value = []; // 메시지 초기화
+    await getChatMessageList(); // 새로운 roomId로 메시지 불러오기
+    connect(); // WebSocket 재연결
+  } else {
+    roomId.value = null; // roomId 초기화
+    console.log("chatRoomSeq가 비어 있습니다.");
   }
 }, { immediate: true });
 
-
-// 페이지 마운트 시 WebSocket 연결 및 데이터 로딩
+// 컴포넌트 생성 및 소멸 시 이벤트 처리
 onMounted(() => {
-  connect();  // WebSocket 연결
-  getChatMessageList();  // 처음 로드 시 채팅 메시지 목록 가져오기
+  if (props.chatRoomSeq) {
+    roomId.value = props.chatRoomSeq; // 초기 roomId 설정
+    getChatMessageList(); // 초기 메시지 로드
+    connect(); // 초기 WebSocket 연결
+  }
 });
 
-// 페이지 언마운트 시 WebSocket 연결 해제
 onBeforeUnmount(() => {
-  disconnect();
+  disconnect(); // WebSocket 연결 해제
 });
 </script>
-
 
 <style scoped>
 .chat-container {

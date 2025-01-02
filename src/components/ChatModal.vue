@@ -7,11 +7,9 @@
     >
       <div class="modal-header">
         <div>{{ chatType === 'mentor' ? '멘토링' : '그룹 채팅' }}</div>
-        {{chatRoomSeq}}
         <button @click="closeModal" class="chatBot-modal-delete-button">X</button>
       </div>
       <div class="modal-body">
-        <!-- Pass the chatType and chatRoomSeq props to Chatting component -->
         <Chatting :chatRoomSeq="chatRoomSeq"/>
       </div>
     </div>
@@ -23,9 +21,9 @@ import {ref, defineProps, defineEmits, onMounted, onUnmounted} from 'vue';
 import Chatting from '@/views/chat/Chatting.vue';
 
 const props = defineProps({
-  isVisible: Boolean,        // To control modal visibility
-  chatType: String,          // chatType (mentor or group)
-  chatRoomSeq: String,       // chatRoomSeq (chat room ID)
+  isVisible: Boolean,
+  chatType: String,
+  chatRoomSeq: String,
 });
 
 const emit = defineEmits(['update:isVisible']); // 부모로부터 isVisible 업데이트 받을 수 있게 설정
@@ -88,6 +86,7 @@ onUnmounted(() => {
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 600;
 }
 
 .chat-modal {

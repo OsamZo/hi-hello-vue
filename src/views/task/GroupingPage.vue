@@ -15,6 +15,9 @@ export default {
   setup(props) {
     console.log('Props:', props); // 전달받은 값 디버깅
     const { templateType, departmentSeq, templateSeq } = props;
+    console.log('templateType:', templateType); // 추가
+    console.log('departmentSeq:', departmentSeq); // 추가
+    console.log('templateSeq:', templateSeq); // 추가
 
     const data = ref([]); // 전체 데이터 저장
     const groups = ref([]); // 그룹 리스트

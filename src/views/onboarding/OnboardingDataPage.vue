@@ -15,7 +15,7 @@ import {
   drop,
   dragOver,
   dragStart,
-  resetTemplateData,
+  resetTemplateData, isFormValid, errorMessage,
 } from '@/services/OnboardingDataApi.js';  // 상대 경로로 스크립트 파일을 import 합니다.
 loadTemplates(); // 화면 로드시 템플릿 리스트 불러오기
 
@@ -235,7 +235,15 @@ loadTemplates(); // 화면 로드시 템플릿 리스트 불러오기
             <div class="onboarding-data-label">
               <label>차수</label>
             </div>
-            <input type="text" v-model="templateForm.templateTaskRound"/>
+            <input
+                v-model="templateForm.templateTaskRound"
+                type="text"
+                id="templateProcedure"
+                required
+                placeholder="차수를 입력해 주세요"
+            />
+            <p v-if="!isFormValid" style="color: red;">{{ errorMessage }}</p>
+
           </div>
           <div class="onboarding-data-line">
             <div class="onboarding-data-label">

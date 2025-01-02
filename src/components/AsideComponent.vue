@@ -216,7 +216,6 @@ const menus = ref([
     position: "팀장",
     subMenus: [
       {name: "과제 평가 조회", url: "/task-eval"},
-      {name: "멘토링 보고서 조회", url: "/onboarding/report"},
     ],
   },
   {name: "최종 평가", url: "/final-eval", role: "MENTOR", position: "팀장"},
@@ -279,6 +278,7 @@ onMounted(async () => {
   padding: 20px;
   box-sizing: border-box;
   text-align: center;
+  flex-shrink: 0;
 }
 
 .logo {

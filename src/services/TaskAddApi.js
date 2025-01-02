@@ -1,7 +1,8 @@
 import { ref } from 'vue';
 import {springAPI} from "@/services/axios.js";
 import { useRouter } from 'vue-router'; // useRouter 가져오기
-import axios from 'axios'; // 추가 필요
+import {useUserStore} from "@/stores/UserStore.js"
+
 export function useTask() {
     const taskType = ref('PERSONAL');
     const fileName = ref('');
@@ -15,6 +16,11 @@ export function useTask() {
     const router = useRouter();
     const departments = ref([]);
     const taskRounds = ref([]);
+    const templateSeq = ref('');
+    const userStore = useUserStore();
+    const employeeInfo = userStore.getEmployeeInfo();
+    const employeeRole = employeeInfo.employeeRole;
+
 
 
     const handleFileChange = (event) => {
@@ -87,7 +93,7 @@ export function useTask() {
         // 기본 DTO 생성
         const taskCreateDTO = {
             departmentSeq: departmentSeq.value,
-            templateSeq: taskSubmitSeq.value,
+            templateSeq: templateSeq.value,
             taskType: taskType.value,
             taskTitle: taskTitle.value,
             taskContent: taskContent.value,
@@ -125,33 +131,49 @@ export function useTask() {
             alert('과제가 등록되었습니다.');
             window.location.href = '/task/list';
         } catch (error) {
+            console.log('taskCreateDTO:', taskCreateDTO);
             alert('과제 등록에 실패했습니다.');
             console.error(error);
         }
     };
 
-    const template_type = ref('JOB'); // 예시 값: 'JOB' 또는 'NORMAL'
-    const selectedDepartmentSeq = ref(1); // 예시 값: department_seq (JOB에서 사용)
+    const template_type = ref(''); // 예시 값: 'JOB' 또는 'NORMAL'
+    const selectedDepartmentSeq = ref(''); // 예시 값: department_seq (JOB에서 사용)
 
     // 그룹 매칭 버튼 클릭 시 페이지 이동
     const goToGroupingPage = () => {
-        if (template_type.value === 'JOB') {
+        console.log('templateSeq:', templateSeq.value);
+        console.log('departmentSeq:', departmentSeq.value);
+        console.log('taskType:', taskType.value);
+        const userRole = employeeRole.toString();
+        localStorage.getItem('accessToken')
+        console.log('userRole:', userRole);
+
+        const template_type = userRole === 'MENTOR' ? 'JOB' : userRole === 'HR' ? 'NORMAL' : null;
+        console.log(template_type);
+
+        if (!template_type) {
+            console.error('Invalid user role. Cannot determine template_type.');
+            return; // 유효하지 않은 권한일 경우 중단
+        }
+        if (template_type === 'JOB') {
             // JOB일 때 department_seq와 templateSeq 함께 라우팅
+            console.log("push")
             router.push({
                 path: '/grouping',
                 query: {
                     template_type: 'JOB',
-                    department_seq: selectedDepartmentSeq.value,
-                    template_seq: '2', // 나중에 값 받아오기
+                    department_seq: departmentSeq.value,
+                    template_seq: templateSeq.value,
                 },
             });
-        } else if (template_type.value === 'NORMAL') {
+        } else if (template_type === 'NORMAL') {
             // NORMAL일 때는 template_type과 templateSeq만 넘김
             router.push({
                 path: '/grouping',
                 query: {
                     template_type: 'NORMAL',
-                    template_seq: '3', // 나중에 값 받아오기
+                    template_seq: templateSeq.value,
                 },
             });
         }
@@ -210,6 +232,7 @@ export function useTask() {
         round,
         departments,
         taskRounds,
+        templateSeq,
         back,
         fetchTaskRounds,
         fetchDepartments,

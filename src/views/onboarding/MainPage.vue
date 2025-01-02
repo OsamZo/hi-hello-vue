@@ -289,15 +289,33 @@ const changeCompleteStatus = async(templateSeq) => {
 
 const resetBoxPositions = (index) => {
   const boxWidthGap = 400; // 박스의 가로 간격
-  const boxHeightGap = 250; // 박스의 세로 간격
+  const rowGap = 50;
+  const boxes = document.querySelectorAll('.item-box');
+  const rowHeights = [];  // 각 행의 최대 높이를 저장
 
-  const row = Math.floor(index / 3); // 3개씩 한 줄로 배치
-  const col = index % 3;
+  let cumulativeHeight = 200;
 
-  const left = row % 2 === 0 ? 210 + col * boxWidthGap : 210 + (2 - col) * boxWidthGap; // 왼쪽 또는 오른쪽으로 배치
-  const top = 200 + row * boxHeightGap; // 세로 방향 간격
+  boxes.forEach((box, index) => {
+    const boxHeight = box.getBoundingClientRect().height;
+    const row = Math.floor(index / 3); // 3개씩 한 줄로 배치
+    const col = index % 3;
 
-  boxPositions.push({top, left});
+    // 현재 행의 최대 높이를 업데이트
+    if(!rowHeights[row]) rowHeights[row] = 0;
+    rowHeights[row] = Math.max(rowHeights[row], boxHeight);
+
+    const left = row % 2 === 0 ? 210 + col * boxWidthGap : 210 + (2 - col) * boxWidthGap; // 왼쪽 또는 오른쪽으로 배치
+    const top = cumulativeHeight; // 세로 방향 간격
+
+    boxPositions.push({top, left});
+
+    if (col === 2 || index === boxes.length - 1) {
+      cumulativeHeight += rowHeights[row] + rowGap;
+    }
+  })
+
+  // 초기화된 boxPositions을 로컬 스토리지에 저장
+  localStorage.setItem('boxPositions', JSON.stringify(boxPositions));
 }
 
 /* 온보딩 박스 위치 및 선 연결에 관한 메서드들 */
@@ -332,9 +350,6 @@ const updateBoxPositions = () => {
     onboardingList.value.forEach((_, index) => {
       resetBoxPositions(index);
     });
-
-    // 초기화된 boxPositions을 로컬 스토리지에 저장
-    localStorage.setItem('boxPositions', JSON.stringify(boxPositions));
   }
 };
 
@@ -420,8 +435,21 @@ const startDrag = (index, event) => {
 
 const onDrag = (event) => {
   if (draggingCard === null) return;
-  boxPositions[draggingCard].left = event.clientX - offsetX;
-  boxPositions[draggingCard].top = event.clientY - offsetY;
+  const canvasRect = canvas.value.getBoundingClientRect();
+  const boxWidth = document.querySelector(`#item-${draggingCard}`).offsetWidth;
+  const boxHeight = document.querySelector(`#item-${draggingCard}`).offsetHeight;
+
+  // 계산된 위치
+  let newLeft = event.clientX - offsetX;
+  let newTop = event.clientY - offsetY;
+
+  // canvas 경계 제한
+  newLeft = Math.max(canvasRect.left, Math.min(canvasRect.right - boxWidth, newLeft));
+  newTop = Math.max(canvasRect.top, Math.min(canvasRect.bottom - boxHeight, newTop));
+
+  // 업데이트된 위치 저장
+  boxPositions[draggingCard].left = newLeft - canvasRect.left + canvas.value.scrollLeft;
+  boxPositions[draggingCard].top = newTop - canvasRect.top + canvas.value.scrollTop;
   updateLines();
 };
 

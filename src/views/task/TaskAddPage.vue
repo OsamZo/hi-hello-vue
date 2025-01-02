@@ -15,6 +15,7 @@ const {
   departmentSeq,
   departments,
   taskRounds,
+  templateSeq,
   back,
   fetchDepartments,
   handleFileChange,
@@ -52,7 +53,7 @@ onMounted(() => {
           <option v-for="department in departments"
                   :key="department.departmentSeq"
                   :value="department.departmentSeq">
-            {{ department.departmentName || '부서 없음' }} <!-- 이름 확인용 -->
+            {{ department.departmentName || '부서 없음' }}
           </option>
         </select>
       </div>

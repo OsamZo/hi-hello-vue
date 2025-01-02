@@ -1,7 +1,7 @@
 import {springAPI} from "@/services/axios.js";
 
 export const fetchMenteesByDepartment = (departmentSeq) => {
-    return springAPI.get(`/hr/mentee/${departmentSeq}`);
+    return springAPI.get(`/hr/task/mentee/${departmentSeq}`);
 };
 
 export const fetchAllMentors = () => {

@@ -96,9 +96,22 @@ export const deleteTemplate = async (templateSeq, templateProcedure) => {
     }
 };
 
+// 템플릿 유효성 검사
+export const isFormValid = ref(true);
+export const errorMessage = ref('');
+
 // 템플릿 데이터를 전송하는 함수
 export const submitTemplate = async () => {
     await setMaxTemplateProcedure(); // 비동기로 최대값 갱신
+    if (!templateForm.value.templateTitle) {
+        isFormValid.value = false;
+        errorMessage.value = '차수를 입력해 주세요.';
+        return; // 차수가 비어 있으면 폼 제출하지 않음
+    }
+
+    isFormValid.value = true;
+    errorMessage.value = '';
+
     console.log("Submit template maxTemplateProcedure:", maxTemplateProcedure.value); // 디버깅 로그
 
     const formData = new FormData();
