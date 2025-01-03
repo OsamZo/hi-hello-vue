@@ -94,8 +94,6 @@ export default {
         })),
       };
 
-      // taskAdd로 요청 데이터 전달, query를 사용해서 URL에 전달
-      alert(JSON.stringify({ name: 'TaskAddPage', query: { groupsData: JSON.stringify(requestData) } }));
       router.push({ name: 'TaskAddPage', query: { groupsData: JSON.stringify(requestData) } });
     };
 
@@ -198,7 +196,7 @@ button {
   background-color: red;
   color: white;
   border: none;
-  padding: 4px 8px;
+  height: 30px;
   cursor: pointer;
 }
 

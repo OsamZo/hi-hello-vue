@@ -16,7 +16,8 @@ import {
   dragOver,
   dragStart,
   resetTemplateData, isFormValid, errorMessage,
-} from '@/services/OnboardingDataApi.js';  // 상대 경로로 스크립트 파일을 import 합니다.
+  fetchQuizCategory,
+} from '@/services/OnboardingDataApi.js';
 loadTemplates(); // 화면 로드시 템플릿 리스트 불러오기
 
 </script>
@@ -278,9 +279,11 @@ loadTemplates(); // 화면 로드시 템플릿 리스트 불러오기
               <label>퀴즈 카테고리</label>
             </div>
             <select v-model="templateForm.quizCategorySeq">
-<!--   추후 API 연동 할 것           -->
-              <option value="1">안전 관리</option>
-              <option value="1">소방 관리</option>
+              <option v-for="category in quizCategories"
+                      :key="category.quizCategorySeq"
+                      :value="category.quizCategorySeq">
+                {{ category.name }} <!-- 각 카테고리 이름 표시 -->
+              </option>
             </select>
           </div>
           <div class="onboarding-data-line">

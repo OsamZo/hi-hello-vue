@@ -37,8 +37,19 @@ const onLogin = async () => {
     if (!success) {
         errorMessage.value = '로그인에 실패했습니다. 사번과 비밀번호를 확인하세요.';
     } else {
-        errorMessage.value = '';
-        router.push('/main');
+      errorMessage.value = '';
+
+      const employeeInfo = userStore.getEmployeeInfo();
+      const employeeRole = employeeInfo.employeeRole[0];
+      const positionName = employeeInfo.employeePositionName;
+
+      if (employeeRole === 'HR') {
+        await router.push('/employee-management');
+      } else if (employeeRole === 'MENTOR' || employeeRole === 'MENTEE') {
+        await router.push('/main');
+      } else if (positionName === '팀장') {
+        await router.push('/mentoring/planning');
+      }
     }
 };
 </script>

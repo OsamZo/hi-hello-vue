@@ -1,7 +1,7 @@
-import { ref } from 'vue';
-import {springAPI} from "@/services/axios.js";
-import { useRouter } from 'vue-router'; // useRouter 가져오기
-import {useUserStore} from "@/stores/UserStore.js"
+import { ref, onMounted } from 'vue';
+import { springAPI } from "@/services/axios.js";
+import { useRouter, useRoute } from 'vue-router';
+import { useUserStore } from "@/stores/UserStore.js";
 
 export function useTask() {
     const taskType = ref('PERSONAL');
@@ -14,6 +14,8 @@ export function useTask() {
     const departmentSeq = ref('');
     const round = ref('1주차');
     const router = useRouter();
+    const route = useRoute();
+    const groupsData = ref([]); // 전달받은 groupsData 저장
     const departments = ref([]);
     const taskRounds = ref([]);
     const templateSeq = ref('');
@@ -21,7 +23,47 @@ export function useTask() {
     const employeeInfo = userStore.getEmployeeInfo();
     const employeeRole = employeeInfo.employeeRole;
 
+    // 로컬 스토리지에 상태 저장
+    const saveStateToLocalStorage = () => {
+        const state = {
+            taskType: taskType.value,
+            fileName: fileName.value,
+            tableData: tableData.value,
+            taskTitle: taskTitle.value,
+            taskContent: taskContent.value,
+            departmentSeq: departmentSeq.value,
+            templateSeq: templateSeq.value,
+        };
+        localStorage.setItem('taskState', JSON.stringify(state));
+    };
 
+    // 로컬 스토리지에서 상태 복원
+    const loadStateFromLocalStorage = () => {
+        const savedState = localStorage.getItem('taskState');
+        if (savedState) {
+            const state = JSON.parse(savedState);
+            taskType.value = state.taskType || 'PERSONAL';
+            fileName.value = state.fileName || '';
+            tableData.value = state.tableData || [];
+            taskTitle.value = state.taskTitle || '';
+            taskContent.value = state.taskContent || '';
+            departmentSeq.value = state.departmentSeq || '';
+            templateSeq.value = state.templateSeq || '';
+        }
+    };
+
+    // route.query에서 groupsData 불러오기
+    onMounted(() => {
+        if (route.query.groupsData) {
+            try {
+                groupsData.value = JSON.parse(route.query.groupsData); // 파싱하여 저장
+                console.log('받아온 그룹 데이터:', groupsData.value);
+            } catch (error) {
+                console.error('Invalid groupsData format:', error);
+            }
+        }
+        loadStateFromLocalStorage(); // 기존 로컬 스토리지 상태 복원
+    });
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
@@ -29,8 +71,7 @@ export function useTask() {
             fileName.value = file.name.length > 15
                 ? file.name.substring(0, 10) + '...'
                 : file.name;
-
-            console.log('파일 이름:', fileName.value); // 디버깅용 로그
+            console.log('파일 이름:', fileName.value);
         }
     };
 
@@ -78,19 +119,19 @@ export function useTask() {
     };
 
     const deleteRow = (index) => {
-        if(index > 0){
+        if (index > 0) {
             tableData.value.splice(index, 1);
         }
-    }
+    };
 
     const back = () => {
+        loadStateFromLocalStorage(); // 뒤로 갈 때 상태 복원
         window.history.back();
-    }
+    };
 
     const submitTask = async () => {
         const formData = new FormData();
 
-        // 기본 DTO 생성
         const taskCreateDTO = {
             departmentSeq: departmentSeq.value,
             templateSeq: templateSeq.value,
@@ -102,22 +143,17 @@ export function useTask() {
                 evalListScore: item.evalListScore,
                 evalIndSeq: item.evalIndSeq,
             })),
+            tasks: groupsData.value // route에서 받아온 데이터 포함
         };
 
-        // 파일 선택 여부에 따른 처리
         const fileInput = document.getElementById('fileInput');
-        const file = fileInput.files[0];
+        const file = fileInput?.files[0];
 
-        // 파일이 있을 경우
         if (file) {
-            taskCreateDTO.fileName = file.name; // 파일 이름을 taskCreateDTO에 추가
-            formData.append('fileUrl', file);   // 파일을 formData에 추가
-        } else {
-            // 파일이 없으면 fileName을 포함하지 않음
-            delete taskCreateDTO.fileName; // fileName 필드를 제거
+            taskCreateDTO.fileName = file.name;
+            formData.append('fileUrl', file);
         }
 
-        // taskCreateDTO를 formData에 추가
         formData.append('taskCreateDTO', JSON.stringify(taskCreateDTO));
 
         try {
@@ -129,6 +165,7 @@ export function useTask() {
             });
 
             alert('과제가 등록되었습니다.');
+            localStorage.removeItem('taskState'); // 성공 시 상태 제거
             window.location.href = '/task/list';
         } catch (error) {
             console.log('taskCreateDTO:', taskCreateDTO);
@@ -137,59 +174,35 @@ export function useTask() {
         }
     };
 
-    const template_type = ref(''); // 예시 값: 'JOB' 또는 'NORMAL'
-    const selectedDepartmentSeq = ref(''); // 예시 값: department_seq (JOB에서 사용)
-
-    // 그룹 매칭 버튼 클릭 시 페이지 이동
     const goToGroupingPage = () => {
-        console.log('templateSeq:', templateSeq.value);
-        console.log('departmentSeq:', departmentSeq.value);
-        console.log('taskType:', taskType.value);
+        saveStateToLocalStorage(); // 상태 저장
         const userRole = employeeRole.toString();
-        localStorage.getItem('accessToken')
-        console.log('userRole:', userRole);
-
         const template_type = userRole === 'MENTOR' ? 'JOB' : userRole === 'HR' ? 'NORMAL' : null;
-        console.log(template_type);
 
         if (!template_type) {
             console.error('Invalid user role. Cannot determine template_type.');
-            return; // 유효하지 않은 권한일 경우 중단
+            return;
         }
-        if (template_type === 'JOB') {
-            // JOB일 때 department_seq와 templateSeq 함께 라우팅
-            console.log("push")
-            router.push({
-                path: '/grouping',
-                query: {
-                    template_type: 'JOB',
-                    department_seq: departmentSeq.value,
-                    template_seq: templateSeq.value,
-                },
-            });
-        } else if (template_type === 'NORMAL') {
-            // NORMAL일 때는 template_type과 templateSeq만 넘김
-            router.push({
-                path: '/grouping',
-                query: {
-                    template_type: 'NORMAL',
-                    template_seq: templateSeq.value,
-                },
-            });
-        }
+
+        router.push({
+            path: '/grouping',
+            query: {
+                template_type,
+                department_seq: departmentSeq.value,
+                template_seq: templateSeq.value,
+            },
+        });
     };
 
-    // API 호출 함수
     const fetchDepartments = async () => {
         try {
             const response = await springAPI.get('/hr/department', {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-                    'Content-Type': 'multipart/form-data',
                 },
             });
             if (response.data.success) {
-                departments.value = response.data.data; // 데이터 저장
+                departments.value = response.data.data;
             } else {
                 console.error('부서 정보를 가져오는 데 실패했습니다:', response.data.message);
             }
@@ -207,11 +220,7 @@ export function useTask() {
             });
 
             if (response.data.success) {
-                if (response.data.data.length === 0) {
-                } else {
-                    // 데이터 저장
-                    taskRounds.value = response.data.data;
-                }
+                taskRounds.value = response.data.data;
             } else {
                 console.error('차수 정보를 가져오는 데 실패했습니다:', response.data.message);
             }
@@ -241,6 +250,6 @@ export function useTask() {
         deleteRow,
         addRow,
         submitTask,
-        goToGroupingPage
+        goToGroupingPage,
     };
 }

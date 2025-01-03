@@ -221,5 +221,17 @@ export const drop = (event, index) => {
     event.preventDefault();
 };
 
+export const fetchQuizCategory = async () => {
+    try {
+        const response = await springAPI.get(`/hr/quizCategory`)
+        return response.data;
+    } catch (error) {
+        console.error("퀴즈 카테고리 조회 실패", error.response?.data || error.message);
+        throw error;
+    }
+};
+
+
+
 // 화면 로드시 템플릿 리스트 불러오기
 loadTemplates();

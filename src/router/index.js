@@ -36,7 +36,6 @@ const router = createRouter({
     routes,
 
     scrollBehavior (to, from, savedPosition) {
-        
         if(savedPosition){
             return savedPosition;
         }else{
@@ -47,6 +46,7 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
     const userStore = useUserStore();
+
     const sseStore = useSSEStore();
 
     // SSE 연결 상태 확인 및 처리
@@ -57,11 +57,20 @@ router.beforeEach(async (to, from, next) => {
 
     // 인증된 사용자가 '/' 경로로 접근하는 경우
     if (to.path === '/' && userStore.accessToken) {
+        const employeeInfo = userStore.getEmployeeInfo();
+        const employeeRole = employeeInfo.employeeRole[0];
+        const positionName = employeeInfo.employeePositionName;
+
         // 대시보드나 다른 메인 페이지로 리다이렉트
-        next({ path: '/main' }); // 또는 적절한 라우트 이름
+        if (employeeRole === 'HR') {
+            next({ path: '/employee-management' });
+        } else if (employeeRole === 'MENTOR' || employeeRole === 'MENTEE') {
+            next({ path: '/main' });
+        } else if (positionName === '팀장'){
+            next({ path: '/mentoring/planning' })
+        }
         return;
     }
-
     next();
 });
 

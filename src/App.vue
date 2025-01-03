@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, onUnmounted, ref } from 'vue';
+import {computed, onBeforeUnmount, onMounted, onUnmounted, ref} from 'vue';
 import { useRoute } from 'vue-router';
 import AsideComponent from '@/components/AsideComponent.vue';
 import { useUserStore } from '@/stores/UserStore';
@@ -158,7 +158,7 @@ onUnmounted(() => {
     <ChatBotModal
         :isVisible="isChatBotModalVisible"
         @update:isVisible="isChatBotModalVisible = $event"
-        iframeSrc="http://192.168.1.236:8501/"
+        iframeSrc="http://192.168.1.6:8501/"
     />
   </div>
 </template>

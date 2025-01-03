@@ -99,10 +99,14 @@ const saveMentorFeedback = async (editedMentorFeedback) => {
   try {
     await updateFeedback(employeeSeq, reportSeq.value, editedMentorFeedback);
   } catch (error) {
-    console.error('saveFeedback 메서드 피드백 수정 중 오류가 발생하였습니다.'. error);
+    console.error('saveFeedback 메서드 피드백 수정 중 오류가 발생하였습니다.'.error);
     // alert('피드백 수정중 오류가 발생하였습니다.');
     throw error;
   }
+}
+
+const goBack = () => {
+  router.back();
 }
 
 onMounted(() => {
@@ -118,13 +122,23 @@ onMounted(() => {
     </div>
 
     <div class="employee-name-section">
-      <div class="mentoring-section">
-        <span>멘토 </span><div class="employee-name">{{ mentorName }}</div>
+      <div class="mentoring-info">
+        <div class="mentoring-section">
+          <span>멘토 </span>
+          <div class="employee-name">{{ mentorName }}</div>
+        </div>
+        <div class="mentoring-section">
+          <span>멘티 </span>
+          <div class="employee-name">{{ menteeName }}</div>
+        </div>
       </div>
-      <div class="mentoring-section">
-        <span>멘티 </span><div class="employee-name">{{ menteeName }}</div>
+      <div class="back-btn-box">
+        <button class="back-btn" @click="goBack">뒤로가기</button>
       </div>
     </div>
+
+
+
 
     <div class="report-write-section">
       <section class="report-section">
@@ -239,9 +253,10 @@ onMounted(() => {
 
 .employee-name-section {
   display: flex;
-  flex-wrap: wrap;  /* 요소들을 여러 줄로 wrap */
+  flex-wrap: wrap;
   gap: 10px;
   align-content: center;
+  justify-content: space-between;
   margin-bottom: 15px;
 }
 
@@ -250,7 +265,7 @@ onMounted(() => {
 }
 
 .mentoring-section {
-  flex-basis: 100%;  /* 각 요소가 전체 너비를 사용하도록 설정 */
+  flex-basis: 100%; /* 각 요소가 전체 너비를 사용하도록 설정 */
 }
 
 .mentoring-section > span {
@@ -341,5 +356,20 @@ h2 {
   color: var(--gray);
   text-align: center;
   font-style: italic;
+}
+
+.back-btn {
+  background-color: var(--gray);
+  color: var(--white);
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.back-btn:hover {
+  background-color: var(--black);
 }
 </style>
