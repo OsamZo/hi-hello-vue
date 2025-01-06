@@ -17,7 +17,7 @@ export default {
             });
 
             if (response.data.success) {
-                console.log('체크리스트 상태 업데이트 성공:', response.data.message);
+                // console.log('체크리스트 상태 업데이트 성공:', response.data.message);
             } else {
                 console.error('체크리스트 상태 업데이트 실패:', response.data.message);
             }
@@ -88,7 +88,7 @@ export default {
     },
 
     goToUrl(url) {
-        console.log('Received URL:', url); // URL 값 확인
+        // console.log('Received URL:', url); // URL 값 확인
         if (url) {
             window.open(url, '_blank'); // URL이 정상일 경우 새 탭에서 열기
         } else {

@@ -16,7 +16,7 @@ export const useWebSocketStore = defineStore('webSocket', ws => {
 
     /* 1. WebSocket 연결 함수 */
     function connectWebSocket() {
-        console.log('connectWebsocket 작동');
+        // console.log('connectWebsocket 작동');
 
         const authStore = useUserStore();
         const token = authStore.accessToken;
@@ -25,7 +25,7 @@ export const useWebSocketStore = defineStore('webSocket', ws => {
             console.error('Access token is missing');
             return;
         }
-        console.log("token 설정 완")
+        // console.log("token 설정 완")
         // STOMP Client 설정
         stompClient.value = new Client({
             webSocketFactory: () => new SockJS(socketUrl), // WebSocket 팩토리 함수
@@ -39,19 +39,19 @@ export const useWebSocketStore = defineStore('webSocket', ws => {
 
         // 연결 성공 시 콜백
         stompClient.value.onConnect = (frame) => {
-            console.log('WebSocket 연결 성공:', frame);
+            // console.log('WebSocket 연결 성공:', frame);
             isConnected.value = true;
         };
 
         // 연결 실패 또는 종료 시 콜백
         stompClient.value.onDisconnect = () => {
-            console.log('WebSocket 연결 종료');
+            // console.log('WebSocket 연결 종료');
             isConnected.value = false;
         };
 
         stompClient.value.onStompError = (frame) => {
-            console.error('STOMP 에러:', frame.headers['message']);
-            console.error('추가 정보:', frame.body);
+            // console.error('STOMP 에러:', frame.headers['message']);
+            // console.error('추가 정보:', frame.body);
 
             alert('WebSocket 연결 중 문제가 발생했습니다.');
         };
@@ -64,7 +64,7 @@ export const useWebSocketStore = defineStore('webSocket', ws => {
         if (stompClient.value) {
             stompClient.value.deactivate();
             isConnected.value = false;
-            console.log('웹소켓 연결 종료');
+            // console.log('웹소켓 연결 종료');
         }
     }
 
@@ -88,12 +88,12 @@ export const useWebSocketStore = defineStore('webSocket', ws => {
                     receivedMessages.value.shift();
                 }
 
-                console.log(`채팅방 ${chatroomSeq}의 새 메시지: `, receivedMessage);
+                // console.log(`채팅방 ${chatroomSeq}의 새 메시지: `, receivedMessage);
             }
         );
 
         subscriptions.value[chatroomSeq] = subscription; // 구독 객체 저장
-        console.log(`채팅방 ${chatroomSeq}을 구독했습니다.`);
+        // console.log(`채팅방 ${chatroomSeq}을 구독했습니다.`);
     }
 
 

@@ -37,7 +37,7 @@ const toggleChatModal = async (type) => {
     } else if (type === 'group') {
       chatRoomSeq.value = await getGroupChatRoomSeq(userStore.getEmployeeInfo().employeeSeq);
     }
-    console.log(`${type} Room Seq: ${chatRoomSeq.value}`);
+    // console.log(`${type} Room Seq: ${chatRoomSeq.value}`);
   } catch (error) {
     console.error("채팅방 시퀀스 불러오기 실패:", error);
   }

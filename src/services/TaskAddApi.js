@@ -1,4 +1,4 @@
-import { ref, onMounted } from 'vue';
+import {ref, onMounted, toRaw} from 'vue';
 import { springAPI } from "@/services/axios.js";
 import { useRouter, useRoute } from 'vue-router';
 import { useUserStore } from "@/stores/UserStore.js";
@@ -15,7 +15,7 @@ export function useTask() {
     const round = ref('1주차');
     const router = useRouter();
     const route = useRoute();
-    const groupsData = ref([]); // 전달받은 groupsData 저장
+    const groupsData = ref([]);
     const departments = ref([]);
     const taskRounds = ref([]);
     const templateSeq = ref('');
@@ -52,17 +52,16 @@ export function useTask() {
         }
     };
 
-    // route.query에서 groupsData 불러오기
     onMounted(() => {
         if (route.query.groupsData) {
             try {
-                groupsData.value = JSON.parse(route.query.groupsData); // 파싱하여 저장
-                console.log('받아온 그룹 데이터:', groupsData.value);
+                groupsData.value = JSON.parse(route.query.groupsData);
+                // console.log('받아온 그룹 데이터:', groupsData.value);
             } catch (error) {
                 console.error('Invalid groupsData format:', error);
             }
         }
-        loadStateFromLocalStorage(); // 기존 로컬 스토리지 상태 복원
+        loadStateFromLocalStorage();
     });
 
     const handleFileChange = (event) => {
@@ -71,7 +70,7 @@ export function useTask() {
             fileName.value = file.name.length > 15
                 ? file.name.substring(0, 10) + '...'
                 : file.name;
-            console.log('파일 이름:', fileName.value);
+            // console.log('파일 이름:', fileName.value);
         }
     };
 
@@ -142,9 +141,30 @@ export function useTask() {
                 evalListContent: item.evalListContent,
                 evalListScore: item.evalListScore,
                 evalIndSeq: item.evalIndSeq,
-            })),
-            tasks: groupsData.value // route에서 받아온 데이터 포함
+            }))
         };
+
+        // taskType이 "GROUP"인 경우에만 group 데이터를 추가
+        if (taskType.value === 'GROUP') {
+            const rawGroupsData = toRaw(groupsData.value);
+
+            if (!rawGroupsData || !rawGroupsData.tasks || rawGroupsData.tasks.length === 0) {
+                alert('그룹 데이터가 없습니다. 그룹을 추가한 후 다시 시도하세요.');
+                return;
+            }
+
+            // TaskRequestWrapper 형태로 객체를 전달해야 하므로 배열이 아닌 객체로 수정
+            taskCreateDTO.tasks = {
+                tasks: rawGroupsData.tasks.map(group => ({
+                    members: group.members // 그룹 멤버들만 포함
+                }))
+            };
+        }
+
+        // taskType이 "GROUP"이 아닌 경우 tasks 필드를 아예 생략
+        else {
+            delete taskCreateDTO.tasks;
+        }
 
         const fileInput = document.getElementById('fileInput');
         const file = fileInput?.files[0];
@@ -165,10 +185,9 @@ export function useTask() {
             });
 
             alert('과제가 등록되었습니다.');
-            localStorage.removeItem('taskState'); // 성공 시 상태 제거
+            localStorage.removeItem('taskState');
             window.location.href = '/task/list';
         } catch (error) {
-            console.log('taskCreateDTO:', taskCreateDTO);
             alert('과제 등록에 실패했습니다.');
             console.error(error);
         }

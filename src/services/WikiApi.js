@@ -55,7 +55,7 @@ export const fetchWikiByWikiModContentSeq = async(wikiSeq, wikiModContentSeq) =>
         const response = await springAPI.get(`/wiki/${wikiSeq}/ver/${wikiModContentSeq}`);
         return response.data;
     } catch(error) {
-        console.log("위키 특정 버전 내용을 가져오는 중 오류가 발생했습니다.");
+        // console.log("위키 특정 버전 내용을 가져오는 중 오류가 발생했습니다.");
     }
 }
 
@@ -64,7 +64,7 @@ export const updateWiki = async(wikiSeq, wikiData) => {
     try {
         return await springAPI.put(`/wiki/${wikiSeq}`, wikiData);
     } catch(error) {
-        console.error("위키를 수정하던 중 오류가 발생했습니다.", error);
+        // console.error("위키를 수정하던 중 오류가 발생했습니다.", error);
     }
 }
 

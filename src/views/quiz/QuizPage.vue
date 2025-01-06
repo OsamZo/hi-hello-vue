@@ -67,9 +67,7 @@ const handleAnswer = async (userAnswer) => {
   }
 
   const isCorrect = currentQuiz.value.quiz_answer === (userAnswer ? 1 : 0);
-
-  
-  console.log(isCorrect);
+  // console.log(isCorrect);
 
   try {
     await submitQuizAnswer(

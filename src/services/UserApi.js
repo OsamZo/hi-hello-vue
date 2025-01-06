@@ -50,7 +50,7 @@ export const fetchMenteeInfo = async() => {
         const response = await springAPI.get(`/mentor/mentee/info`)
         return response.data;
     }catch(error){
-        console.log("멘티 정보 조회 실패", error.response?.data || error.message)
+        // console.log("멘티 정보 조회 실패", error.response?.data || error.message)
         throw error;
     }
 };
@@ -61,7 +61,7 @@ export const fetchEmployeeList = async () => {
         const response = await springAPI.get(`/hr/user`);
         return response.data;
     } catch (error) {
-        console.log("사원 목록을 불러오지 못했습니다.", error);
+        // console.log("사원 목록을 불러오지 못했습니다.", error);
     }
 }
 

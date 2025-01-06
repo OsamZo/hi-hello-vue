@@ -133,7 +133,7 @@ onMounted(async () => {
 
 <style scoped>
 .content_box {
-  width: 70%;
+  width: 70vw;
   margin: 0 auto;
   min-width: 700px;
 }

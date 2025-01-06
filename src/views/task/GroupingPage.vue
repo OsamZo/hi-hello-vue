@@ -1,7 +1,7 @@
 <script>
 import '@/styles/task/GroupingPage.css'
 import { ref, computed, onMounted } from 'vue';
-import { fetchMenteesByDepartment, fetchAllMentors } from '@/services/GroupingApi.js';
+import { fetchMenteesByDepartment, fetchAllMentees } from '@/services/GroupingApi.js';
 import WhiteBoxComponent from "@/components/WhiteBoxComponent.vue";
 import router from "@/router/index.js";
 
@@ -13,11 +13,11 @@ export default {
     templateSeq: String,
   },
   setup(props) {
-    console.log('Props:', props); // 전달받은 값 디버깅
+    // console.log('Props:', props); // 전달받은 값 디버깅
     const { templateType, departmentSeq, templateSeq } = props;
-    console.log('templateType:', templateType); // 추가
-    console.log('departmentSeq:', departmentSeq); // 추가
-    console.log('templateSeq:', templateSeq); // 추가
+    // console.log('templateType:', templateType); // 추가
+    // console.log('departmentSeq:', departmentSeq); // 추가
+    // console.log('templateSeq:', templateSeq); // 추가
 
     const data = ref([]); // 전체 데이터 저장
     const groups = ref([]); // 그룹 리스트
@@ -29,14 +29,24 @@ export default {
       try {
         if (templateType === 'JOB' && departmentSeq) {
           const response = await fetchMenteesByDepartment(departmentSeq);
-          data.value = response.data.data;
+          console.log("JOB 응답:", response);
+          data.value = response.data.data.map((item) => ({
+            employeeSeq: item.employeeSeq,
+            employeeName: item.employeeName,
+            employeeNum: item.employeeNum,
+          }));
         } else if (templateType === 'NORMAL') {
-          const response = await fetchAllMentors();
-          data.value = response.data.data;
-        } else {
-          throw new Error('유효하지 않은 요청입니다.');
+          const response = await fetchAllMentees();
+          console.log("NORMAL 응답:", response);
+          data.value = response.data.data.map((item) => ({
+            employeeSeq: item.employeeSeq,
+            departmentName: item.departmentName,  // 반드시 NORMAL의 구조에 맞게 수정
+            employeeName: item.employeeName,
+            employeeNum: item.employeeNum,
+          }));
         }
 
+        console.log('Data after load:', data.value);
         // 그룹 초기화
         createGroups(groupCount.value);
       } catch (err) {
@@ -62,6 +72,7 @@ export default {
     const handleDrop = (event, groupId) => {
       event.preventDefault();
       const item = JSON.parse(event.dataTransfer.getData('text/plain'));
+      console.log(item)
       const group = groups.value.find((g) => g.id === groupId);
       if (group && !group.members.some((m) => m.employeeSeq === item.employeeSeq)) {
         group.members.push(item);
@@ -81,8 +92,12 @@ export default {
 
     const draggableItems = computed(() => {
       const assignedIds = groups.value.flatMap((group) => group.members.map((m) => m.employeeSeq));
-      return data.value.filter((item) => !assignedIds.includes(item.employeeSeq));
+      const availableItems = data.value.filter((item) => !assignedIds.includes(item.employeeSeq));
+      console.log("할당된 ID:", assignedIds); // Debug
+      console.log("사용 가능한 목록:", availableItems); // Debug
+      return availableItems;
     });
+
 
     const saveGroups = async () => {
       // requestData에서 필요한 정보만 선택하여 넘김

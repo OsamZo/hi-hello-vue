@@ -2,7 +2,7 @@
     width: 100%;
 }
 .final-eval-result-list .page-container {
-    width: 70%;
+    width: 70vw;
     text-align: center;
     display: flex;
     flex-direction: column;

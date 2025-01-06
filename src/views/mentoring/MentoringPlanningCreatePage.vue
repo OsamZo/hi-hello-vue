@@ -45,9 +45,9 @@ const submitMentoringPlan = async () => {
     formData.append("productImgUrl", mentoringPlanForm.value.file);
 
     // 디버그 출력: FormData의 내용을 확인
-    for (let pair of formData.entries()) {
-      console.log(pair[0] + ": " + pair[1]);
-    }
+    // for (let pair of formData.entries()) {
+    //   console.log(pair[0] + ": " + pair[1]);
+    // }
 
     // API 호출
     const response = await submitMentoringPlanService(formData);
@@ -111,8 +111,8 @@ const goToBack = () => {
         </div>
         <br><br>
         <div class="button-group">
-          <input type="button" class="gotoback" @click="goToBack" value="취소">
           <input type="submit" class="submit-button" value="등록">
+          <input type="button" class="gotoback" @click="goToBack" value="취소">
         </div>
 
       </form>
@@ -161,6 +161,10 @@ const goToBack = () => {
   margin: 0 auto;
   gap: 10px;
 }
+.button-group input {
+  cursor: pointer;
+}
+
 .submit-button {
   width: 140px;
   height: 30px;
@@ -199,6 +203,7 @@ form {
   display: flex;
   align-items: center;
   height: 33px;
+  cursor: pointer;
 }
 
 #file-name {

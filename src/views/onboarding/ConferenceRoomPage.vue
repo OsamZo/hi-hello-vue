@@ -48,7 +48,7 @@ const initFlatpickr = (el) => {
     mode: "single",
     onChange: (selectedDates) => {
       selectedDate.value = selectedDates[0] || null;
-      console.log('Selected Date:', selectedDate.value);
+    //   console.log('Selected Date:', selectedDate.value);
     }
   });
 };
@@ -173,7 +173,7 @@ const updateReservation = (roomIndex, startIndex, endIndex) => {
   for (let i = start; i <= end; i++) {
     room.schedule[i] = room.schedule[i] === 'available' ? 'reserved' : 'available';
   }
-  console.log(`Reservation updated for room ${room.name} from ${start} to ${end}`);
+  // console.log(`Reservation updated for room ${room.name} from ${start} to ${end}`);
 };
 
 </script>

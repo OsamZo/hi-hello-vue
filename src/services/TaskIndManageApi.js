@@ -33,7 +33,7 @@ export function useEvalItems() {
     });
 
     const addItem = async () => {
-        console.log('전송 전 데이터:', newItem.value); // 디버깅용
+        // console.log('전송 전 데이터:', newItem.value); // 디버깅용
 
         if (!newItem.value.evalIndContent.trim()) {
             alert('항목을 입력해주세요.');
@@ -56,7 +56,7 @@ export function useEvalItems() {
             );
 
             if (response.data.success) {
-                console.log('API 요청 데이터:', newItem.value);
+                // console.log('API 요청 데이터:', newItem.value);
                 alert('평가 지표를 성공적으로 추가하였습니다.');
                 newItem.value.evalIndContent = '';
                 newItem.value.evalIndScore = 0;
@@ -90,7 +90,7 @@ export function useEvalItems() {
             if (response.data.success) {
                 // 삭제 성공 시, 해당 항목을 배열에서 제거
                 evalItems.value = evalItems.value.filter(item => item.evalIndSeq !== evalIndSeq);
-                console.log('삭제 성공');
+                // console.log('삭제 성공');
                 alert('평가 지표가 성공적으로 삭제되었습니다.');
             } else {
                 console.error('삭제 실패:', response.data.message);

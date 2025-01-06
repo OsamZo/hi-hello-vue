@@ -5,7 +5,7 @@ export const getChatMessages = async (roomId) => {
         const response = await springAPI.get(`/chat/${roomId}/messages`);
         return response.data;
     } catch (error){
-        console.log("대화 내용 조회 실패",error);
+        console.error("대화 내용 조회 실패",error);
         throw error;
     }
 };

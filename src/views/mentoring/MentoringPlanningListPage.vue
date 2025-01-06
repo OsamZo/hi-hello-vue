@@ -55,7 +55,7 @@ const searchPlans = async (query) => {
     return;
   }
   try {
-    console.log("검색 호출 시작:", searchCategory.value, query);
+    // console.log("검색 호출 시작:", searchCategory.value, query);
     const encodedQuery = encodeURIComponent(query);
     const response = await searchMentoringPlans(searchCategory.value, encodedQuery);
     mentoringPlanningList.splice(0); // 기존 리스트 초기화

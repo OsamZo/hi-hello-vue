@@ -7,7 +7,7 @@ const fetchingTaskGroupMembers = async(taskSubmitSeq) => {
   try {
     taskGroupMemberList.length = 0;
     const response = await fetchTaskGroupMembers(taskSubmitSeq);
-    console.log(response)
+    // console.log(response)
     response.data.data.forEach((taskGroupMember) => {
       taskGroupMemberList.push({
         employeeNum: taskGroupMember.employeeNum,

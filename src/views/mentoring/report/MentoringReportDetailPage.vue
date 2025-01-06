@@ -54,7 +54,7 @@ const handleReportEdit = async () => {
       await updateReport(employeeSeq, reportSeq.value, editData);
       reportContent.value = editedReportContent.value;
       reportFeeling.value = editedReportFeeling.value;
-      console.log('보고서가 저장되었습니다.')
+    //   console.log('보고서가 저장되었습니다.')
     } catch (error) {
       console.error('보고서 저장 중 오류가 발생했습니다:', error)
       return
@@ -78,9 +78,9 @@ const handleMentorFeedbackEdit = async () => {
     try {
       await saveMentorFeedback(editedMentorFeedback.value);
       reportFeedbackContent.value = editedMentorFeedback.value;
-      console.log('멘토 피드백이 저장되었습니다.')
+      // console.log('멘토 피드백이 저장되었습니다.')
     } catch (error) {
-      console.error('멘토 피드백 저장 중 오류가 발생했습니다:', error)
+      // console.error('멘토 피드백 저장 중 오류가 발생했습니다:', error)
       return
     }
   } else {
@@ -258,6 +258,7 @@ onMounted(() => {
   align-content: center;
   justify-content: space-between;
   margin-bottom: 15px;
+  width: 59vw;
 }
 
 .employee-name {

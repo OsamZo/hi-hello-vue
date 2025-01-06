@@ -25,7 +25,7 @@ const handleSubmit = async () => {
       checkEmployeeNewPwd: checkEmployeeNewPwd.value
     });
 
-    console.log(response);
+    // console.log(response);
     if (!response.success) {
       throw new Error(JSON.stringify(response));
     }
@@ -36,7 +36,7 @@ const handleSubmit = async () => {
   } catch (error) {
     try {
       const errorResponse = JSON.parse(error.message);
-      console.log(errorResponse);
+      // console.log(errorResponse);
       const errorMessage = errorResponse.message || '비밀번호 변경 도중 오류가 발생하였습니다.';
 
       alert(`${errorMessage}`);

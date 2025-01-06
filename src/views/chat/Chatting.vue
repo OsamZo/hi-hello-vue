@@ -62,15 +62,15 @@ const connect = () => {
   const authStore = useUserStore();
   const token = authStore.accessToken;
 
-  if (!roomId.value) {
-    console.log("roomId가 누락되었습니다.");
-    return;
-  }
-
-  if (!token) {
-    console.error("토큰이 누락되었습니다!");
-    return;
-  }
+  // if (!roomId.value) {
+  //   console.log("roomId가 누락되었습니다.");
+  //   return;
+  // }
+  //
+  // if (!token) {
+  //   console.error("토큰이 누락되었습니다!");
+  //   return;
+  // }
 
   stompClient.value = new Client({
     brokerURL: socketUrl,
@@ -165,7 +165,7 @@ const disconnect = () => {
 const getChatMessageList = async () => {
   try {
     if (!roomId.value) {
-      console.log("유효하지 않은 roomId로 메시지를 조회할 수 없습니다.");
+      // console.log("유효하지 않은 roomId로 메시지를 조회할 수 없습니다.");
       return;
     }
 
@@ -183,7 +183,7 @@ const getChatMessageList = async () => {
 watch(() => props.chatRoomSeq, async (newChatRoomSeq, oldChatRoomSeq) => {
   if (newChatRoomSeq) {
     roomId.value = newChatRoomSeq; // roomId 업데이트
-    console.log("chatRoomSeq 변경:", newChatRoomSeq);
+    // console.log("chatRoomSeq 변경:", newChatRoomSeq);
 
     disconnect(); // 기존 WebSocket 연결 해제
     messages.value = []; // 메시지 초기화
@@ -191,7 +191,7 @@ watch(() => props.chatRoomSeq, async (newChatRoomSeq, oldChatRoomSeq) => {
     connect(); // WebSocket 재연결
   } else {
     roomId.value = null; // roomId 초기화
-    console.log("chatRoomSeq가 비어 있습니다.");
+    // console.log("chatRoomSeq가 비어 있습니다.");
   }
 }, { immediate: true });
 

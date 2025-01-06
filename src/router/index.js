@@ -71,10 +71,12 @@ router.beforeEach(async (to, from, next) => {
         // 대시보드나 다른 메인 페이지로 리다이렉트
         if (employeeRole === 'HR') {
             next({path: '/employee-management'});
-        } else if (employeeRole === 'MENTOR' || employeeRole === 'MENTEE') {
-            next({path: '/main'});
         } else if (positionName === '팀장') {
             next({path: '/mentoring/planning'})
+        } else if (employeeRole === 'MENTOR' || employeeRole === 'MENTEE') {
+            next();
+        } else {
+            next({path: '/'});
         }
         return;
     }

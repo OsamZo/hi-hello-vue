@@ -22,10 +22,10 @@ export function useTask() {
     // API 호출
     const fetchTasks = async () => {
         try {
-            const url = employeeRole === 'MENTOR'
-                ? '/mentor/task'
-                : '/hr/task';
-
+            const role = Array.isArray(employeeRole) ? employeeRole[0] : employeeRole;
+            const url = role === 'HR' ? '/hr/task' : '/mentor/task';  // 'HR'일 때 /hr/task로 요청
+            // console.log(role);
+            // console.log(url);
             const response = await springAPI.get(url, {
                 headers: {
                     'Authorization': `Bearer ${token}`

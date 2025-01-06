@@ -69,7 +69,7 @@
       </ul>
     </aside>
     <AlarmModal class="alarm-modal" v-if="shouldShowAlarms" @click.stop/>
-    <EmployeeProfile class="profile-modal" v-if="shouldShowProfile" @click.stop/>
+    <EmployeeProfile class="profile-modal" v-if="shouldShowProfile" @click.stop @change-view="handleViewChange"/>
   </div>
 </template>
 
@@ -132,7 +132,15 @@ const handleOutsideClick = (event) => {
   }
 };
 
+const handleViewChange = () => {
+  resetModalsAndMenu();
+  activeMenu.value = null;
+  activeSubMenu.value = null;
+};
+
 router.beforeEach(async (to, from, next) => {
+  resetModalsAndMenu();
+
   if (to.path === '/final-eval') {
     isLoading.value = true; // 로딩 상태 설정
     await nextTick(); // DOM 업데이트를 강제로 반영
@@ -171,8 +179,8 @@ const loadName = async (employeeSeq) => {
 const notificationStore = useNotificationStore();
 const menus = ref([
   // 멘티 ASIDE
-  {name: "인턴 위키", url: "/wiki", role: "MENTEE"},
   {name: "멘토 소개", url: "/mentor/intro", role: "MENTEE"},
+  {name: "인턴 위키", url: "/wiki", role: "MENTEE"},
   // { name: "멘토 채팅", url: "/mentor-chat", role: "MENTEE" },
   {name: "보고서 조회", url: "/mentoring/report", role: "MENTEE"},
 
@@ -194,6 +202,7 @@ const menus = ref([
     subMenus: [
       {name: "퀴즈 관리", url: "/hr/quiz"},
       {name: "과제 등록", url: "/task/add"},
+      {name: "과제 리스트 조회", url: "/task/list"},
       {name: "동료 평가 지표 관리", url: "/hr/peer/review/list"},
       {name: "공통 평가 지표 관리", url: "/taskInd/manage"},
     ],
@@ -215,19 +224,20 @@ const menus = ref([
   {
     name: "멘토링",
     role: "MENTOR",
-    subMenus: [
-      {name: "멘티 소개", url: "/mentee/intro"},
-      {name: "멘토링 계획서", url: "/mentoring/planning"},
-      {name: "멘토링 보고서", url: "/mentoring/report"},
-    ],
-  },
-  {
-    name: "멘토링",
-    position: "팀장",
-    subMenus: [
-      {name: "멘토링 계획서", url: "/mentoring/planning"},
-      {name: "멘토링 보고서", url: "/mentoring/report"},
-    ],
+    getSubMenus: (positionName) => {
+      const baseMenus = [
+        {name: "멘토링 계획서", url: "/mentoring/planning"},
+        {name: "멘토링 보고서", url: "/mentoring/report"},
+      ];
+      // 팀장이 아닌 경우에만 멘티 소개 메뉴 추가
+      if (positionName !== "팀장") {
+        return [
+          {name: "멘티 소개", url: "/mentee/intro"},
+          ...baseMenus
+        ];
+      }
+      return baseMenus;
+    }
   },
   {
     name: "온보딩 과제 관리",
@@ -258,8 +268,16 @@ const filteredMenus = computed(() => {
   const role = employeeInfo.value.employeeRole[0];
   const positionName = employeeInfo.value.employeePositionName;
   return menus.value.filter(
-      (menu) => menu.role === role || menu.position === positionName
-  );
+      (menu) => menu.role === role || menu.position === positionName)
+      .map(menu => {
+        if (menu.getSubMenus) {
+          return {
+            ...menu,
+            subMenus: menu.getSubMenus(positionName)
+          };
+        }
+        return menu;
+      });
 });
 
 const creatingFinalEval = async () => {

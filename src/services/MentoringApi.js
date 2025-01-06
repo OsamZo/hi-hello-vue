@@ -6,7 +6,7 @@ export const fetchMentoringPlanningList = async() => {
         const response = await springAPI.get('/mentor/planning');
         return response.data;
     } catch (error){
-        console.log("멘토링 계획서 리스트를 불러오지 못했습니다.",error);
+        console.error("멘토링 계획서 리스트를 불러오지 못했습니다.",error);
     }
 }
 

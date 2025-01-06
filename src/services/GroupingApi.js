@@ -4,8 +4,8 @@ export const fetchMenteesByDepartment = (departmentSeq) => {
     return springAPI.get(`/hr/task/mentee/${departmentSeq}`);
 };
 
-export const fetchAllMentors = () => {
-    return springAPI.get('/hr/mentor');
+export const fetchAllMentees = () => {
+    return springAPI.get('/hr/mentee');
 };
 
 // 제출된 그룹 과제의 그룹 멤버 조회

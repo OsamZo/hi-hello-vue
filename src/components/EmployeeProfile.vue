@@ -10,12 +10,14 @@ const employeeInfo = ref(null);
 const employeeFileUrl = ref(null);
 const filUrl = ref(null);
 const route = router;
-const emit = defineEmits(['shouldShowProfile']);
+const emit = defineEmits(['change-view']);
+const activeMenu = null;
+const activeSubMenu = null;
 // 클릭 이벤트로 라우팅 처리
 const navigateToUpdatePassword = () => {
   const employeeSeq = useUserStore().getEmployeeInfo().employeeSeq;
+  emit('change-view', activeMenu, activeSubMenu);
   route.push(`/employee/${employeeSeq}/password`);
-  emit('should-show-profile', false);
 };
 
 // 기본 프로필 이미지
@@ -23,7 +25,7 @@ const defaultProfileImg = 'https://hi-hello-bucket.s3.ap-northeast-2.amazonaws.c
 
 onMounted(async () => {
   employeeInfo.value = await fetchEmployeeInfo();
-  console.log(employeeInfo.value.fileUrl)
+  // console.log(employeeInfo.value.fileUrl)
 });
 </script>
 

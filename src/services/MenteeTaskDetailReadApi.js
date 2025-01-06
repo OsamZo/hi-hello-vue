@@ -23,7 +23,7 @@ export const fetchTaskDetail = async (taskSeq, taskDetail, getAuthHeader) => {
             headers: getAuthHeader(),
         });
 
-        console.log(response); // 응답 구조를 확인하기 위해 추가
+        // console.log(response); // 응답 구조를 확인하기 위해 추가
 
         if (response.data.success && Array.isArray(response.data.data) && response.data.data.length > 0) {
             const { taskTitle, taskContent, templateEndAt, fileName, fileUrl } = response.data.data[0];

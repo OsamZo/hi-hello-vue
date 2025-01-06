@@ -49,11 +49,11 @@ const updateChecklistStatus = async (checklistStatusSeq, checklistSeq, listCheck
       },
     });
 
-    if (response.data.success) {
-      console.log('체크리스트 상태 업데이트 성공:', response.data.message);
-    } else {
-      console.error('체크리스트 상태 업데이트 실패:', response.data.message);
-    }
+    // if (response.data.success) {
+    //   console.log('체크리스트 상태 업데이트 성공:', response.data.message);
+    // } else {
+    //   console.error('체크리스트 상태 업데이트 실패:', response.data.message);
+    // }
   } catch (error) {
     console.error('API 호출 에러:', error);
   }
@@ -229,8 +229,8 @@ const groupChecklistByTemplate = (onboardingList) => {
 };
 
 const modalContentStyle = computed(() => {
-  console.log('selectedItem:', selectedItem);
-  console.log('selectedItem.templateType:', selectedItem.value.templateType);
+  // console.log('selectedItem:', selectedItem);
+  // console.log('selectedItem.templateType:', selectedItem.value.templateType);
 
   if (selectedItem && selectedItem.value.templateType === 'VIDEO') {
     return {
@@ -245,7 +245,7 @@ const modalContentStyle = computed(() => {
 });
 
 const goToUrl = (url) => {
-  console.log('Received URL:', url);
+  // console.log('Received URL:', url);
   if (url) {
     window.open(url, '_blank'); // 새 탭에서 열기
   } else {

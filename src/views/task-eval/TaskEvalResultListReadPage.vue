@@ -107,7 +107,7 @@ onMounted(async () => {
 
 <style scoped>
 .task-eval-result-list-container {
-  width: 70%;
+  width: 70vw;
 }
 
 .page-title {

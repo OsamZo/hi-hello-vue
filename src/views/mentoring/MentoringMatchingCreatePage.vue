@@ -80,6 +80,7 @@ const saveMentoringGroups = async () => {
   try {
     const response = await createMentoringGroup(mentoringGroups.value);
     alert('멘토-멘티 매칭이 성공적으로 등록되었습니다.');
+    window.location.reload(); // 화면 새로고침
   } catch (e) {
     console.error('매칭 저장 실패:', e);
     alert('매칭 저장에 실패했습니다.');
