@@ -224,20 +224,19 @@ const menus = ref([
   {
     name: "멘토링",
     role: "MENTOR",
-    getSubMenus: (positionName) => {
-      const baseMenus = [
-        {name: "멘토링 계획서", url: "/mentoring/planning"},
-        {name: "멘토링 보고서", url: "/mentoring/report"},
-      ];
-      // 팀장이 아닌 경우에만 멘티 소개 메뉴 추가
-      if (positionName !== "팀장") {
-        return [
-          {name: "멘티 소개", url: "/mentee/intro"},
-          ...baseMenus
-        ];
-      }
-      return baseMenus;
-    }
+    subMenus: [
+      {name: "멘티 소개", url: "/mentee/intro"},
+      {name: "멘토링 계획서", url: "/mentoring/planning"},
+      {name: "멘토링 보고서", url: "/mentoring/report"},
+    ],
+  },
+  {
+    name: "멘토링",
+    position: "팀장",
+    subMenus: [
+      {name: "멘토링 계획서", url: "/mentoring/planning"},
+      {name: "멘토링 보고서", url: "/mentoring/report"},
+    ],
   },
   {
     name: "온보딩 과제 관리",
@@ -269,15 +268,6 @@ const filteredMenus = computed(() => {
   const positionName = employeeInfo.value.employeePositionName;
   return menus.value.filter(
       (menu) => menu.role === role || menu.position === positionName)
-      .map(menu => {
-        if (menu.getSubMenus) {
-          return {
-            ...menu,
-            subMenus: menu.getSubMenus(positionName)
-          };
-        }
-        return menu;
-      });
 });
 
 const creatingFinalEval = async () => {

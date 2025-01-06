@@ -172,7 +172,7 @@ export const useUserStore = defineStore('user', {
                 const decodedText = new TextDecoder('utf-8').decode(bytes);
                 return JSON.parse(decodedText);
             } catch (error) {
-                console.error("추출이 불가능합니다.", error);
+                // console.error("추출이 불가능합니다.", error);
                 return null;
             }
         },
