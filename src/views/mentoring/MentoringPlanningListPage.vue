@@ -121,7 +121,7 @@ onMounted(async () => {
         </template>
 
         <template #item="{ item, index }">
-          <div class="flex-line" @click="goToDetailPage(item.planningSeq)">
+          <div class="flex-line item-row" @click="goToDetailPage(item.planningSeq)">
             <div>{{ index + 1 }}</div>
             <div>{{ item.planningName }}</div>
 
@@ -151,6 +151,11 @@ onMounted(async () => {
   color: var(--red);
   font-weight: 700;
 }
+
+.item-row {
+  cursor: pointer;
+}
+
 .yellow-box{
   box-shadow: 2px 2px 4px 0 var(--gray);
   background-color: var(--purple);
@@ -215,5 +220,6 @@ onMounted(async () => {
   border-radius: 10px;
   width: 100px;
   height: 50px;
+  cursor: pointer;
 }
 </style>

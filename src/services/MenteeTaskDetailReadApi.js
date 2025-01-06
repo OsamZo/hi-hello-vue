@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { springAPI } from "@/services/axios.js";
 import {nextTick} from "vue";
-
+import { useRoute } from 'vue-router';
 
 // 날짜 포맷팅 함수 (YYYY-MM-DD HH:mm:ss 형식)
 export const formatDate = (dateString) => {
@@ -99,7 +99,6 @@ export const submitTask = async (taskSeq, taskSubmitContent, file, uploadedFileN
         console.error("과제 제출 중 오류 발생:", error);
         alert("과제 제출 중 오류가 발생했습니다.");
     }
-
 };
 
 export const formatContent = (content) => {

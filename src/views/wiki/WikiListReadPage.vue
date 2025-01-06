@@ -156,7 +156,7 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   width: 80%;
-  margin: 29px auto;
+  margin: 0 auto;
   position: relative;
 }
 

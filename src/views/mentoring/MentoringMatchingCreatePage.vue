@@ -34,9 +34,8 @@ const fetchMentees = async (departmentSeq) => {
   try {
     const response = await fetchMenteeByDepartment(departmentSeq);
     mentees.value = response.data.data || [];
-    console.log('mentees:', mentees.value);
   } catch (e) {
-    console.error('멘티 조회 실패', e);
+    // console.error('멘티 조회 실패', e);
     error.value = "멘티 데이터를 불러오는 데 실패했습니다.";
   }
 };
@@ -147,6 +146,7 @@ const saveMentoringGroups = async () => {
   margin-bottom: 49px;
   margin-top: 105px;
   font-size: 30px;
+  font-weight: 700
 }
 .submit{
   margin-top: 20px;

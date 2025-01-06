@@ -114,13 +114,19 @@ const subscribeToChat = () => {
 
 // 수신 메시지 처리
 const handleIncomingMessage = (message) => {
-  messages.value.push({
-    message: message.message,
-    userCode: message.userCode,
-    userName: message.userName,
-    createdAt: message.createdAt,
-  });
+  const exists = messages.value.some(
+      (msg) => msg.createdAt === message.createdAt && msg.message === message.message
+  );
+  if (!exists) {
+    messages.value.push({
+      message: message.message,
+      userCode: message.userCode,
+      userName: message.userName,
+      createdAt: message.createdAt,
+    });
+  }
 };
+
 
 // 메시지 전송
 const sendMessage = () => {

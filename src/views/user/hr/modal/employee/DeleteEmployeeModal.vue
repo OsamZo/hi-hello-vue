@@ -88,7 +88,7 @@ const isDelete = () => {
 }
 
 .info-value {
-  margin-left: 50px;
+  margin-left: 30px;
 }
 
 .button-group {

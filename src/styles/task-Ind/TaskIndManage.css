@@ -1,8 +1,27 @@
+.header{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
 .taskIndInd-header{
     display:flex;
-    width: 67%;
-    padding: 10px;
-    margin: 0 0 0 125px;
+    width: 85%;
+    margin: 20px 0;
+
+}
+
+.taskInd-num-title{
+    margin: 0 0 2vh 14%;
+}
+
+.taskInd-depart-title{
+    margin: 0 0 0 31%;
+}
+
+.taskInd-round-title{
+    margin: 0 0 0 32%;
 }
 
 .router-container{
@@ -27,33 +46,27 @@
     display: flex;
     flex-direction: column;
     width: 80%;
-    padding: 20px 20px;
+    padding: 40px 20px 20px 20px;
     background-color: var(--white);
     border-radius: 10px;
 }
 .taskInd-item-delete{
     width: 60px;
-    height: 23px;
+    height: 31px;
     border-radius: 10px;
     background: var(--yellow);
-    border: 0px;
-    box-shadow: 2px 2px 2px 0px rgba(0, 0, 0, 0.25);
+    padding: 5px 0 5px 0;
+    border:0;
     color: white;
 }
 .taskInd-item-delete:hover{
     cursor: pointer;
 }
-.taskIndInd-header {
-    display: flex;
-    justify-content: space-between;
-    padding: 2px;
-    margin-left: 84px;
-}
 .taskInd-item {
     display: flex;
     justify-content: space-between;
     align-items: center; /* 요소를 수직으로 가운데 정렬 */
-    padding: 5px 10px; /* 여백 축소 */
+    padding: 10px 10px; /* 여백 축소 */
     gap: 10px; /* 요소 간 간격 설정 */
 }
 .taskInd-item-num,
@@ -126,4 +139,27 @@
     align-items: center;
     justify-content: center;
     gap:20px;
+    margin-top: 0.5rem;
+}
+
+.taskInd-add-button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.taskInd-add-button {
+    background-color: var(--purple);
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    border-radius: 10px;
+    width: 60%;
+    transition: background-color 0.3s ease; /* 배경색 변화 효과 */
+}
+
+.taskInd-add-button:hover {
+    background-color: var(--dark-purple);
 }

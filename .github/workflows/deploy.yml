@@ -35,7 +35,7 @@ jobs:
           echo "VITE_API_BASE_URL=$VITE_API_BASE_URL" >> .env.staging
           echo "VITE_LAMBDA_API_BASE_URL=$VITE_LAMBDA_API_BASE_URL" >> .env.staging
           echo "VITE_FAST_API_BASE_URL=$VITE_FAST_API_BASE_URL" >> .env.staging
-          echo "VITE_API_CHAT_URL=$VITE_API_CHAT_URL" >> env.staging
+          echo "VITE_API_CHAT_URL=$VITE_API_CHAT_URL" >> .env.staging
         env:
           VITE_APP_TITLE: ${{ secrets.VITE_APP_TITLE }}
           VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}

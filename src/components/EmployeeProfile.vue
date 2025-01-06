@@ -8,6 +8,7 @@ import router from "@/router/index.js";
 
 const employeeInfo = ref(null);
 const employeeFileUrl = ref(null);
+const filUrl = ref(null);
 const route = router;
 const emit = defineEmits(['shouldShowProfile']);
 // 클릭 이벤트로 라우팅 처리
@@ -18,19 +19,22 @@ const navigateToUpdatePassword = () => {
 };
 
 // 기본 프로필 이미지
-const defualtProfileImg = 'https://hi-hello-bucket.s3.ap-northeast-2.amazonaws.com/b9e13a5c-f9df-4025-b17c-832c77b05c20_%ED%94%84%EB%A1%9C%ED%95%84%20%EA%B8%B0%EB%B3%B8%20%EC%9D%B4%EB%AF%B8%EC%A7%80.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20241218T064549Z&X-Amz-SignedHeaders=host&X-Amz-Expires=3600&X-Amz-Credential=AKIAQXPZDBYQREV7D6US%2F20241218%2Fap-northeast-2%2Fs3%2Faws4_request&X-Amz-Signature=43e3ef21904e1d84b1dfb0d09011a5355bc071bcd8b2db4e00b762b115544899';
+const defaultProfileImg = 'https://hi-hello-bucket.s3.ap-northeast-2.amazonaws.com/554c1891-5d3c-40fc-b57f-ef73a08d1190_%EB%A9%98%ED%8B%B01.png?';
 
 onMounted(async () => {
   employeeInfo.value = await fetchEmployeeInfo();
-  employeeFileUrl.value = employeeInfo.value.data.fileUrl;
+  console.log(employeeInfo.value.fileUrl)
 });
 </script>
 
 <template>
 
   <div class="profile" v-if="employeeInfo?.data">
-    <img class="employee_image mb-20" v-if="!employeeFileUrl" :src="{ defualtProfileImg }"/>
-    <img class="employee_image mb-20" v-if="employeeFileUrl" :src="{ employeeFileUrl }"/>
+    <img
+        class="employee_image mb-20"
+        :src="employeeInfo.data.fileUrl || defaultProfileImg"
+        alt="직원 사진"
+    />
     <div class="mb-10">
       <h3 class="employee_name">{{ employeeInfo.data.employeeName }}</h3>
       <span class="employee_num">({{ employeeInfo.data.employeeNum }})</span>

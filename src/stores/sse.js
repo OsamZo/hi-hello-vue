@@ -14,10 +14,10 @@ export const useSSEStore = defineStore('sse', () => {
     const requestNotificationPermission = async () => {
         try {
             const permission = await Notification.requestPermission()
-            console.log('알림 권한:', permission)
+            // console.log('알림 권한:', permission)
             return permission === 'granted'
         } catch (error) {
-            console.error('알림 권한 요청 실패:', error)
+            // console.error('알림 권한 요청 실패:', error)
             return false
         }
     }
@@ -44,12 +44,12 @@ export const useSSEStore = defineStore('sse', () => {
     const connectSSE = async () => {
 
         if (connectionStatus.value === 'connecting' || connectionStatus.value === 'connected') {
-            console.log('이미 SSE가 연결중이거나 연결된 상태입니다.')
+            // console.log('이미 SSE가 연결중이거나 연결된 상태입니다.')
             return
         }
 
         connectionStatus.value = 'connecting'
-        console.log('SSE 연결 시도')
+        // console.log('SSE 연결 시도')
 
         // 알림 권한 요청
         await requestNotificationPermission()
@@ -74,25 +74,25 @@ export const useSSEStore = defineStore('sse', () => {
             eventSource = new EventSourcePolyfill(`${baseUrl}/notify/connect`, options)
 
             eventSource.onopen = () => {
-                console.log('SSE 연결 성공')
+                // console.log('SSE 연결 성공')
                 connectionStatus.value = 'connected'
             }
 
             eventSource.onmessage = (event) => {
                 try {
                     const data = JSON.parse(event.data);
-                    console.log(data);
+                    // console.log(data);
                     if (data.notiType) {
                         notifications.value.push(data)
                         showBrowserNotification(data)
                     }
                 } catch (error) {
-                    console.error('메시지 파싱 에러:', error)
+                    // console.error('메시지 파싱 에러:', error)
                 }
             }
 
             eventSource.onerror = (error) => {
-                console.error('SSE 에러:', error)
+                // console.error('SSE 에러:', error)
                 connectionStatus.value = 'error'
                 if (eventSource) {
                     eventSource.close()
@@ -101,7 +101,7 @@ export const useSSEStore = defineStore('sse', () => {
             }
 
         } catch (error) {
-            console.error('SSE 연결 실패:', error)
+            // console.error('SSE 연결 실패:', error)
             connectionStatus.value = 'error'
             setTimeout(connectSSE, 5000)
         }

@@ -59,9 +59,9 @@ onMounted(async() => {
 <template>
   <div class="wiki-history-container">
     <div v-for="wikiHistory in wikiHistoryList" :key="wikiHistory.wikiModContentSeq" class="wiki-history">
-      <div>{{ formattingDateTime(wikiHistory.latestModDate) }}</div>
-      <div>{{ wikiHistory.editorNum }}</div>
-      <div>{{ wikiHistory.editorName }}</div>
+      <div class="white-space-no-wrap">{{ formattingDateTime(wikiHistory.latestModDate) }}</div>
+      <div class="white-space-no-wrap">{{ wikiHistory.editorNum }}</div>
+      <div class="white-space-no-wrap">{{ wikiHistory.editorName }}</div>
       <button class="purple-button" @click="navigateToRestoredWiki(wikiHistory.wikiModContentSeq)">보기</button>
     </div>
   </div>
@@ -105,5 +105,9 @@ onMounted(async() => {
 
 .purple-button:hover {
   background-color: var(--dark-purple);
+}
+
+.white-space-no-wrap {
+  white-space: nowrap;
 }
 </style>

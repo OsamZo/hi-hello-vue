@@ -20,8 +20,8 @@
         </template>
       </ListComponent>
 
-      <!-- 새 행 추가 -->
-      <div class="taskInd-item new-item">
+      <!-- 긴 + 버튼을 클릭하면 새로운 입력 행이 추가되도록 -->
+      <div v-if="isAdding" class="taskInd-item new-item">
         <div class="taskInd-item-container">
           <div class="taskInd-item-departmentName-input">
             <input
@@ -47,6 +47,11 @@
           </div>
         </div>
       </div>
+
+      <!-- 항목 추가 버튼은 항상 맨 밑에 고정 -->
+      <div class="taskInd-add-button-container">
+        <button @click="toggleNewItem" class="taskInd-add-button">+ 항목 추가</button>
+      </div>
     </div>
   </div>
 </template>
@@ -55,6 +60,14 @@
 import { useEvalItems } from '@/services/TaskIndManageApi.js'; // 새로 만든 파일에서 import
 import ListComponent from '@/components/ListComponent.vue';
 import '@/styles/task-Ind/TaskIndManage.css';
+import {ref} from "vue";
+
+let isAdding = ref(false);
+
+// 긴 + 버튼 클릭 시 새로운 입력 행이 추가되도록 상태 변경
+const toggleNewItem = () => {
+  isAdding.value = !isAdding.value;
+};
 
 const { evalItems, newItem, addItem, deleteItem } = useEvalItems(); // 필요한 변수와 함수 사용
 </script>

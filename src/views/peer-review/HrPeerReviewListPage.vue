@@ -19,10 +19,10 @@
                     <list-component :items="peerReviewList">
                         <template #item="{ item, index }">
                             <div class="peer-review-list__result-item">
-                                <div class="peer-review-list__column">{{ index + 1 }}</div>
-                                <div class="peer-review-list__column">{{ item.peerReviewListContent }}</div>
-                                <div class="peer-review-list__column">{{ item.peerReviewListScore }}</div>
-                                <div class="peer-review-list__column">
+                                <div class="peer-review-list__column-box-1">{{ index + 1 }}</div>
+                                <div class="peer-review-list__column-box-2">{{ item.peerReviewListContent }}</div>
+                                <div class="peer-review-list__column-box-3">{{ item.peerReviewListScore }}</div>
+                                <div class="peer-review-list__column-box-4">
                                     <button class="peer-review-list__delete-btn" @click="handleDelete(item.peerReviewListSeq)">
                                         삭제
                                     </button>
@@ -37,15 +37,15 @@
 
                 <!-- 새 항목 입력 필드 -->
                 <div v-if="isAdding" class="peer-review-list__result-item">
-                    <div class="peer-review-list__column">{{ peerReviewList.length + 1 }}</div>
-                    <div class="peer-review-list__column">
+                    <div class="peer-review-list__column-5">{{ peerReviewList.length + 1 }}</div>
+                    <div class="peer-review-list__column-6">
                         <input v-model="newItem.name" placeholder="항목명" class="peer-review-list__input-field" />
                     </div>
-                    <div class="peer-review-list__column">
+                    <div class="peer-review-list__column-7">
                         <input v-model.number="newItem.score" placeholder="배점" 
                         type="number" class="peer-review-list__input-field" />
                     </div>
-                    <div class="peer-review-list__column">
+                    <div class="peer-review-list__column-8">
                         <button class="peer-review-list__confirm-btn" @click="handleAdd">확인</button>
                         <button class="peer-review-list__cancel-btn" @click="cancelAddItem">취소</button>
                     </div>
@@ -53,7 +53,7 @@
 
                 <!-- 추가 버튼 -->
                 <div class="peer-review-list__add-button-container">
-                    <button class="peer-review-list__add-btn" @click="startAdding">+</button>
+                    <button class="peer-review-list__add-btn" @click="startAdding">+ 항목추가</button>
                 </div>
             </div>
         </white-box>
@@ -141,5 +141,9 @@ input[type="number"]::-webkit-inner-spin-button {
 /* 파이어폭스 */
 input[type="number"] {
     -moz-appearance: textfield;
+}
+
+.header{
+  height: 0 !important;
 }
 </style>

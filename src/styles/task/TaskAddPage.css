@@ -12,6 +12,14 @@
     font-family: "Noto Sans KR", sans-serif;
 }
 
+.evalList{
+    width: 5vw;
+}
+
+.taskAddEvalsub{
+    width: 8vw;
+}
+
 .evalButton-delete{
     border:none;
     color: var(--white);
@@ -29,8 +37,6 @@
 }
 
 .TaskAddButtonBox{
-    display:flex;
-    height: 5.6vh;
     border: none;
     justify-content: center;
     align-items: center;
@@ -103,7 +109,6 @@
 .task-add-page-container .table-detail{
     display: flex;
     flex-direction: column;
-    margin: 10px 0 0 10px;
     padding: 0 100px 0 0;
 }
 
@@ -116,12 +121,13 @@
 .task-add-page-container .taskAddContainer {
     display: flex;
     flex-direction: column;
-    padding: 62px 0 0 132px;
+    padding: 62px 0 0 0;
     gap: 19px;
 
 }
 .task-add-page-container .container-line {
     display: flex;
+    margin-left: 14%;
 }
 .task-add-page-container .task-name,
 .task-depart,
@@ -202,7 +208,9 @@
     vertical-align: top; /* 텍스트가 상단에 정렬되도록 설정 */
 }
 .task-add-page-container .table-container{
-    margin:20px 0 40px 0;
+    width: 50vw;
+    margin:20px 0 40px 11%;
+    padding: 0 20px 0 0;
 }
 
 .task-add-page-container .task-round-input,

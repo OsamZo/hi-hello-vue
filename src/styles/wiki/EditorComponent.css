@@ -1,9 +1,7 @@
 .editor-component-container {
     width: 100%;
     margin: 0 auto;
-    height: 90%;
     min-height: 15rem;
-    max-height: 200rem;
     padding: 1rem;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
@@ -61,11 +59,6 @@
     color: var(--purple);
 }
 
-.editor-component-container .editor-container {
-    height: 90%;
-    max-height: 200rem;
-}
-
 .editor-component-container .editor-content {
     background: var(--white);
     border: 1px solid var(--light-gray);
@@ -115,4 +108,8 @@
 
 .editor-component-container .ProseMirror {
     outline: none;
+}
+
+.editor-content {
+    min-height: 30rem;
 }

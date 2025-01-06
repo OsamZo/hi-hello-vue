@@ -1,4 +1,4 @@
-import{ createRouter, createWebHistory } from 'vue-router';
+import {createRouter, createWebHistory} from 'vue-router';
 import QuizRouter from '@/router/QuizRouter.js';
 import WikiRouter from "@/router/WikiRouter.js";
 import UserRouter from '@/router/UserRouter';
@@ -14,6 +14,7 @@ import OnboardingRouter from "@/router/OnboardingRouter.js";
 import {useUserStore} from "@/stores/UserStore.js";
 import {useSSEStore} from "@/stores/sse.js";
 import ChatRouter from "@/router/ChatRouter.js";
+import {ref} from "vue";
 
 const routes = [
     ...QuizRouter,
@@ -32,33 +33,49 @@ const routes = [
 ]
 
 const router = createRouter({
-    history : createWebHistory(),
+    history: createWebHistory(),
     routes,
 
-    scrollBehavior (to, from, savedPosition) {
-        
-        if(savedPosition){
+    scrollBehavior(to, from, savedPosition) {
+        if (savedPosition) {
             return savedPosition;
-        }else{
-            return { top: 0 };
+        } else {
+            return {top: 0};
         }
     }
 });
 
 router.beforeEach(async (to, from, next) => {
     const userStore = useUserStore();
+
     const sseStore = useSSEStore();
 
     // SSE 연결 상태 확인 및 처리
     if (userStore.accessToken && sseStore.connectionStatus === 'disconnected') {
-        console.log('SSE 연결 시도 중...');
+        // console.log('SSE 연결 시도 중...');
         await sseStore.connectSSE();
     }
 
+    const isAuthenticated = ref(userStore.isAuthenticated);
+    if (!isAuthenticated) {
+        next({path: '/'});
+        return;
+    }
+
     // 인증된 사용자가 '/' 경로로 접근하는 경우
-    if (to.path === '/' && userStore.accessToken) {
+    if ((to.path === '/' || to.path === '/main') && userStore.accessToken) {
+        const employeeInfo = userStore.getEmployeeInfo();
+        const employeeRole = employeeInfo.employeeRole[0];
+        const positionName = employeeInfo.employeePositionName;
+
         // 대시보드나 다른 메인 페이지로 리다이렉트
-        next({ path: '/main' }); // 또는 적절한 라우트 이름
+        if (employeeRole === 'HR') {
+            next({path: '/employee-management'});
+        } else if (employeeRole === 'MENTOR' || employeeRole === 'MENTEE') {
+            next({path: '/main'});
+        } else if (positionName === '팀장') {
+            next({path: '/mentoring/planning'})
+        }
         return;
     }
 

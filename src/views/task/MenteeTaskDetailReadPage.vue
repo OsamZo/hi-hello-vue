@@ -37,9 +37,30 @@ onMounted(() => {
 });
 
 // 과제 제출 함수
-const handleSubmitTask = () => {
-  submitTask(taskSeq, taskSubmitContent, file, uploadedFileName, getAuthHeader);
+const handleSubmitTask = async () => {
+  if (!taskSubmitContent.value.trim()) {
+    alert("과제 제출 내용을 입력해 주세요.");
+    return;
+  }
+
+  try {
+    // PUT 요청
+    await submitTask(
+        taskSeq,
+        taskSubmitContent,
+        file,
+        uploadedFileName,
+        getAuthHeader
+    );
+
+    alert("과제가 성공적으로 제출되었습니다!"); // 성공 메시지
+    window.location.href = '/main'; // 메인 페이지로 이동
+  } catch (error) {
+    console.error("서버 요청 중 오류 발생:", error.response || error.message);
+    alert("서버 요청 중 문제가 발생했습니다. 다시 시도해 주세요."); // 오류 메시지
+  }
 };
+
 
 // 파일 첨부 버튼 클릭 시 input[type=file]을 클릭하도록 처리
 const triggerFileInput = () => {

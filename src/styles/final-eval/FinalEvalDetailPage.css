@@ -86,7 +86,7 @@
 
 .final-eval-detail-read .final-eval-result {
     justify-content: space-between;
-    font-size: 20px;
+    font-size: 16px;
     font-weight: 500;
 }
 
@@ -114,6 +114,7 @@
 .final-eval-detail-read .close-button-container {
     justify-content: center;
     align-items: center;
+    margin-top: 2rem;
 }
 
 .final-eval-detail-go-back-button {

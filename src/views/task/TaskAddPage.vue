@@ -60,6 +60,9 @@ onMounted(() => {
       <div class="container-line">
         <span class="task-round">과제 지정</span>
         <select v-model="templateSeq" class="task-round-input">
+          <option v-if="taskRounds.length === 0" disabled>
+            템플릿 없음
+          </option>
           <option v-for="taskRound in taskRounds"
                   :key="taskRound.templateSeq"
                   :value="taskRound.templateSeq">
@@ -100,7 +103,7 @@ onMounted(() => {
               <td :rowspan="tableData.length + 1" class="evalList">평가 항목</td>
             </tr>
             <tr v-for="(item, index) in tableData" :key="index">
-              <td>{{ item.evalIndContent }}</td>
+              <td class="taskAddEvalsub">{{ item.evalIndContent }}</td>
               <td>
                 <input v-model="item.evalListContent" placeholder="내용을 입력하세요" class="evalContent"/>
               </td>

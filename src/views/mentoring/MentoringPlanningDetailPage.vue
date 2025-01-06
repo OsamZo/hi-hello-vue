@@ -49,7 +49,7 @@ const getPlanDetail = async () => {
       planDetail.value = {};
     }
   } catch (error) {
-    console.error("멘토링 계획서 상세 조회 오류:", error);
+    // console.error("멘토링 계획서 상세 조회 오류:", error);
     planDetail.value = {};
   }
 };
@@ -57,7 +57,7 @@ const getPlanDetail = async () => {
 // 버튼 클릭 이벤트 처리
 const handleButtonClick = async (event) => {
   const planningStatus = event.target.id; // 클릭된 버튼의 id 값(APPROVE or REJECT)
-  console.log(planningStatus)
+  // console.log(planningStatus)
   try {
     // 서버에 PUT 요청 보내기
     const response = await updateMentoringPlanStatus(planningSeq.value, planningStatus);
@@ -66,7 +66,7 @@ const handleButtonClick = async (event) => {
     // 성공적으로 처리되면 새로고침 또는 뒤로 가기
     router.push(`/mentoring/planning`);
   } catch (error) {
-    console.error("계획서 처리 오류:", error);
+    // console.error("계획서 처리 오류:", error);
     alert("오류가 발생했습니다. 다시 시도해주세요.");
   }
 };
@@ -152,6 +152,7 @@ const handleButtonClick = async (event) => {
   align-items: center;
   margin: 0 auto;
   max-width: 300px;
+  cursor: pointer;
 }
 .inline{
   display: flex;
@@ -163,7 +164,9 @@ const handleButtonClick = async (event) => {
   width: 110px;
 }
 .statue{
+  font-size: 15px;
   color: var(--red);
+  font-weight: bold;
 }
 .mentor-plan-detail-page-title{
   font-size: 30px;
@@ -187,5 +190,6 @@ const handleButtonClick = async (event) => {
   font-size: 12px;
   gap: 15px;
   margin-bottom: 10px;
+  align-items: center;
 }
 </style>

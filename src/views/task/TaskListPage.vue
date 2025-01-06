@@ -42,14 +42,11 @@ onMounted(() => {
 
 <template>
   <div class="task-list-page-container">
-  <div class="header">
+  <div class="header-task">
     <div class="title">과제 목록</div>
-    <div class="search-bar">
+    <div class="search-bar-task">
       <SearchBarComponent @search="handleSearch"/>
       <AddTask buttonText="과제 등록" :targetPage="'/task/add'" class="add-task" />
-    </div>
-    <div class="user-roll">
-      <UserRollRectangle :text="employeeRole === 'MENTOR' ? '멘토' : '담당자'" />
     </div>
   </div>
   <div class="TaskListbody">

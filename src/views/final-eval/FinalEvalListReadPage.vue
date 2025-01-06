@@ -22,7 +22,7 @@ const fetchingFinalEvalResultList = async() => {
         employeeNum: finalEval.employeeNum,
         employeeName: finalEval.employeeName,
         departmentName: finalEval.departmentName,
-        totalFinalEvalScore: finalEval.totalFinalEvalScore
+        totalFinalEvalScore: parseFloat(finalEval.totalFinalEvalScore.toFixed(2))
       })
     })
   } catch(error) {
@@ -38,6 +38,8 @@ const searchingFinalEvalResultList = async(keyword) => {
       return;
     }
 
+    searchedFinalEvalResultList.length = 0;
+
     const response = await searchFinalEvalResultList(keyword);
 
     response.data.data.forEach(finalEval => {
@@ -46,7 +48,7 @@ const searchingFinalEvalResultList = async(keyword) => {
         employeeNum: finalEval.employeeNum,
         employeeName: finalEval.employeeName,
         departmentName: finalEval.departmentName,
-        totalFinalEvalScore: finalEval.totalFinalEvalScore
+        totalFinalEvalScore: parseFloat(finalEval.totalFinalEvalScore.toFixed(2))
       })
     })
 
@@ -59,10 +61,6 @@ const searchingFinalEvalResultList = async(keyword) => {
 const navigateToFinalEvalDetail = (employeeSeq) => {
   router.push(`/final-eval/${employeeSeq}`);
 }
-
-watch(searchedFinalEvalResultList, (newList) => {
-  isSearching.value = newList.length > 0;
-});
 
 onMounted(() => {
   fetchingFinalEvalResultList();

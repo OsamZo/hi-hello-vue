@@ -9,6 +9,16 @@ export const createWiki = async(wikiData) => {
     }
 }
 
+// 위키 인덱스 생성
+export const indexWiki = async() => {
+    try {
+        const response = await springAPI.post(`/wiki/index`);
+        return response.data;
+    } catch(error) {
+        console.error('위키 인덱스 생성 중 오류가 발생했습니다.', error);
+    }
+}
+
 // 위키 리스트 조회
 export const fetchWikiList = async() => {
     try {

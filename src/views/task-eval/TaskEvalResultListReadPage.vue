@@ -35,7 +35,6 @@ const fetchingTaskEvalResultList = async () => {
         taskTotalScore: taskEvalResult.taskTotalScore
       })
     })
-    console.log(response)
   } catch (error) {
     alert("과제 평가 결과 리스트를 조회하던 도중 오류가 발생했습니다.");
   }
@@ -84,8 +83,8 @@ onMounted(async () => {
               <div v-if="item.taskTotalScore !== null" class="task-eval-score">
               {{ item.taskTotalScore }}점
               </div>
-              <div v-else-if="employeeRole === 'HR' || employeePosition === '팀장'">
-              평가전
+              <div v-else-if="employeeRole === 'HR' || employeePosition === '팀장'" class="task-eval-score">
+              평가 전
               </div>
               <button
                   v-else-if="employeeRole === 'MENTOR'"
@@ -103,7 +102,6 @@ onMounted(async () => {
         </template>
       </ListComponent>
     </WhiteBoxListComponent>
-
   </div>
 </template>
 
@@ -175,11 +173,12 @@ onMounted(async () => {
 }
 
 .task-total-score {
-  width: 5rem;
+  width: 3rem;
   height: 2.4rem;
   display: flex;
   align-items: center;
   justify-content: center;
+  white-space: nowrap;
 }
 
 .task-eval-score {

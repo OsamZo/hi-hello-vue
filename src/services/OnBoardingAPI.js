@@ -96,7 +96,7 @@ export default {
         }
     },
 
-    // 체크리스트 항목의 상태 변경 (체크박스 개별적으로 처리)
+    // 체크리스트 항목의 상태 변경 (체크박스 개별적으로 처리).
     toggleChecklistStatus(item, content) {
         const updatedStatus = !content.listCheckedStatus;  // 상태 반전
         this.updateChecklistStatus(content.checklistStatusSeq, content.checklistSeq, updatedStatus);
@@ -125,9 +125,13 @@ export const changeCompleteStatusByMentor = async(templateSeq) => {
 }
 
 // 체크리스트 수행 완료 상태 조회
-export const fetchChecklistStatus = async(templateSeq) => {
+export const fetchChecklistStatus = async(templateSeq, userRole) => {
     try {
-        return await springAPI.get(`/template/${templateSeq}/checklist/status`);
+        return await springAPI.get(`/template/${templateSeq}/checklist/status`, {
+            params: {
+                userRole: userRole
+            }
+        });
     } catch(error) {
         alert("체크리스트 수행 완료 상태 조회 중 오류가 발생했습니다.");
     }

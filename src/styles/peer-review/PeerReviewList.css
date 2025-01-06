@@ -4,9 +4,49 @@
     margin: 0 auto;
 }
 
+.list-header{
+    padding: 0;
+}
+
+.peer-review-list__column-box-1{
+   flex: 1;
+    margin: 0 0 0 2%;
+}
+.peer-review-list__column-box-2{
+    flex:1;
+    justify-content: center;
+    margin: 0 0 0 12%;
+}
+
+.peer-review-list__column-box-3{
+    flex:1;
+    margin:0 0 0 12%;
+}
+.peer-review-list__column-box-4{
+    flex:1;
+}
+
+.peer-review-list__column-5{
+    margin: 0 0 0 10.81%;
+}
+
+.peer-review-list__column-6 {
+    width: 25vw;
+    margin-left:11%;
+}
+
+.peer-review-list__column-7{
+    width: 4vw;
+    margin-left: 9%;
+}
+.peer-review-list__column-8{
+    width: 150px;
+    margin-left: 10%;
+}
+
 .peer-review-list-container h1{
     text-align: center;
-    margin: 50px 0;
+    margin: 105px 0 49px 0;
     font-size: 30px;
     color: var(--black);
     font-weight: bold;
@@ -20,22 +60,22 @@
 .peer-review-list__result-item {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     padding: 10px;
+    font-size: 16px;
+
 }
 
 .peer-review-list__column {
-    flex: 1;
+    margin: 0 0 0 10%;
     text-align: center;
 }
 
-.peer-review-list__delete-btn, 
-.peer-review-list__add-btn, 
+.peer-review-list__delete-btn,
 .peer-review-list__confirm-btn, 
 .peer-review-list__cancel-btn {
     padding: 5px 10px;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     color: var(--white);
     cursor: pointer;
 }
@@ -45,7 +85,7 @@
 }
 
 .peer-review-list__confirm-btn {
-    background-color: var(--blue);
+    background-color: var(--purple);
     margin-right: 10px;
 }
 
@@ -55,10 +95,24 @@
 
 .peer-review-list__add-btn {
     background-color: var(--purple);
-    font-size: 20px;
+    font-size: 16px;
+    border: 1px solid var(--purple);
     border-radius: 10px;
+    color: var(--white);
     width: 80%;
     height: 33px;
+}
+
+.peer-review-list__confirm-btn:hover, .peer-review-list__add-btn:hover {
+    background-color: var(--dark-purple);
+}
+
+.peer-review-list__delete-btn:hover {
+    background-color: var(--dark-yellow);
+}
+
+.peer-review-list__cancel-btn:hover {
+    background-color: var(--black);
 }
 
 .peer-review-list__add-button-container {
@@ -69,8 +123,8 @@
 .peer-review-list__input-field {
     padding: 8px;
     border: 1px solid #ddd;
-    border-radius: 5px;
-    width: 70%;
+    border-radius: 10px;
+    width: 100%;
     box-sizing: border-box;
     text-align: center;
 }

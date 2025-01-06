@@ -115,13 +115,29 @@ const closeModal = () => {
 // 페이지 이동
 const goToTaskPage = () => {
   if (selectedItem.value) {
-    router.push(`/task/${selectedItem.value.taskSeq}`);
+    const taskSeq = selectedItem.value.taskSeq;
+    const templateSeq = selectedItem.value.templateSeq; // templateSeq 값 추가
+
+    if (!taskSeq) {
+      console.error('taskSeq 값이 없습니다.');
+      return;
+    }
+    if (!templateSeq) {
+      console.error('templateSeq 값이 없습니다.');
+      return;
+    }
+
+    // URL로 경로와 쿼리 문자열을 전달
+    router.push({
+      path: `/task/${taskSeq}`,
+      query: { templateSeq }, // templateSeq를 쿼리 파라미터로 추가
+    });
   } else {
-    console.error('taskSeq 값이 없습니다.');
+    console.error('selectedItem 값이 없습니다.');
   }
 };
-
 const goToTaskReviewPage = () => {
+
   if (selectedItem.value) {
     router.push(`/task-submit/${selectedItem.value.taskSeq}`);
   } else {
@@ -132,31 +148,31 @@ const goToTaskReviewPage = () => {
 const goToQuiz = () => {
   if (selectedItem.value) {
     router.push(`/quiz/${selectedItem.value.quizCategorySeq}`)
-  } else{
+  } else {
     alert("퀴즈 페이지가 유효하지 않습니다.")
   }
 }
 
 const goToCF = () => {
-  if (selectedItem.value){
+  if (selectedItem.value) {
     const templateSeq = selectedItem.value.templateSeq;
     router.push({
       path: `/onboarding/conferenceRoom`,
-      query: { templateSeq }
+      query: {templateSeq}
     });
-  } else{
+  } else {
     alert("회의실 예약 페이지가 유효하지 않습니다.")
   }
 }
 
 const goToBreak = () => {
-  if (selectedItem.value){
+  if (selectedItem.value) {
     const templateSeq = selectedItem.value.templateSeq;
     router.push({
       path: `/break`,
-      query: { templateSeq }
+      query: {templateSeq}
     });
-  } else{
+  } else {
     alert("휴가 신청 페이지가 유효하지 않습니다.")
   }
 }
@@ -228,7 +244,6 @@ const modalContentStyle = computed(() => {
   };
 });
 
-// URL 열기
 const goToUrl = (url) => {
   console.log('Received URL:', url);
   if (url) {
@@ -239,10 +254,10 @@ const goToUrl = (url) => {
 };
 
 // 체크리스트 항목 상태 변경
-const toggleChecklistStatus = async(item, content) => {
+const toggleChecklistStatus = async (item, content) => {
   const updatedStatus = !content.listCheckedStatus; // 상태 반전
 
-  const beforeUpdateChecklistStatus = await fetchChecklistStatus(item.templateSeq);
+  const beforeUpdateChecklistStatus = await fetchChecklistStatus(item.templateSeq, employeeRole);
 
   await updateChecklistStatus(
       content.checklistStatusSeq,
@@ -251,15 +266,14 @@ const toggleChecklistStatus = async(item, content) => {
   );
   content.listCheckedStatus = updatedStatus; // 상태 변경
 
-  const afterUpdateChecklistStatus = await fetchChecklistStatus(item.templateSeq);
-
+  const afterUpdateChecklistStatus = await fetchChecklistStatus(item.templateSeq, employeeRole);
   if (beforeUpdateChecklistStatus.data.data !== afterUpdateChecklistStatus.data.data) {
     await fetchingChecklistStatus(item.templateSeq);
   }
 };
 
 // 체크리스트 수행 완료 상태 조회 및 처리
-const fetchingChecklistStatus = async(templateSeq) => {
+const fetchingChecklistStatus = async (templateSeq) => {
   try {
     await changeCompleteStatus(templateSeq);
   } catch (error) {
@@ -267,17 +281,17 @@ const fetchingChecklistStatus = async(templateSeq) => {
   }
 }
 
-const changeCompleteStatusMentee = async(templateSeq) => {
+const changeCompleteStatusMentee = async (templateSeq) => {
   await changeCompleteStatusByMentee(templateSeq);
   await fetchOnboardingData();
 }
 
-const changeCompleteStatusMentor = async(templateSeq) => {
+const changeCompleteStatusMentor = async (templateSeq) => {
   await changeCompleteStatusByMentor(templateSeq);
   await fetchOnboardingData();
 }
 
-const changeCompleteStatus = async(templateSeq) => {
+const changeCompleteStatus = async (templateSeq) => {
   if (employeeRole === 'MENTEE') {
     await changeCompleteStatusByMentee(templateSeq);
   } else if (employeeRole === 'MENTOR') {
@@ -289,7 +303,7 @@ const changeCompleteStatus = async(templateSeq) => {
 
 const resetBoxPositions = (index) => {
   const boxWidthGap = 400; // 박스의 가로 간격
-  const rowGap = 50;
+  const rowGap = 80;
   const boxes = document.querySelectorAll('.item-box');
   const rowHeights = [];  // 각 행의 최대 높이를 저장
 
@@ -301,7 +315,7 @@ const resetBoxPositions = (index) => {
     const col = index % 3;
 
     // 현재 행의 최대 높이를 업데이트
-    if(!rowHeights[row]) rowHeights[row] = 0;
+    if (!rowHeights[row]) rowHeights[row] = 0;
     rowHeights[row] = Math.max(rowHeights[row], boxHeight);
 
     const left = row % 2 === 0 ? 210 + col * boxWidthGap : 210 + (2 - col) * boxWidthGap; // 왼쪽 또는 오른쪽으로 배치
@@ -425,9 +439,13 @@ const updateLines = (movedIndex) => {
 };
 
 const startDrag = (index, event) => {
+  const box = document.querySelectorAll('.item-box')[index]; // 박스 DOM 요소 가져오기
+  const rect = box.getBoundingClientRect(); // 박스 위치와 크기 가져오기
+
+  offsetX = event.clientX - rect.left;
+  offsetY = event.clientY - rect.top;
+
   draggingCard = index;
-  offsetX = event.clientX - boxPositions[index].left;
-  offsetY = event.clientY - boxPositions[index].top;
 
   document.addEventListener('mousemove', onDrag);
   document.addEventListener('mouseup', stopDrag);
@@ -477,152 +495,155 @@ onMounted(async () => {
         <div class="status-gauge">
           <div class="vr"></div>
           <div class="status-gauge-container">
-            <progress :value="completedCount" :max="totalCount" class="progress-bar"></progress>
-            <p class="progress-text">{{ completedCount }} / {{ totalCount }}</p>
+            <div>온보딩 수행률</div>
+            <div class="wave-container">
+              <progress :value="completedCount" :max="totalCount" class="progress-bar"></progress>
+              <div class="wave"></div>
+            </div>
+            <p class="progress-text">{{ completedCount }} of {{ totalCount }}</p>
           </div>
         </div>
       </div>
     </div>
-    <div class="onboarding-body-container">
-      <div ref="canvas" class="canvas">
-        <svg class="line-container">
-          <path
-              v-for="(line, index) in lines"
-              :key="index"
-              :d="line.d"
-              stroke="var(--purple)"
-              stroke-width="5"
-              fill="transparent"
-              stroke-dasharray="9, 10"
-              stroke-linecap="round"
-          />
-        </svg>
-        <div
-            v-for="(item, index) in onboardingList"
+
+    <div ref="canvas" class="canvas">
+      <svg class="line-container">
+        <path
+            v-for="(line, index) in lines"
             :key="index"
-            :id="`item-${index}`"
-            class="item-box"
-            :style="{
+            :d="line.d"
+            stroke="var(--purple)"
+            stroke-width="5"
+            fill="transparent"
+            stroke-dasharray="9, 10"
+            stroke-linecap="round"
+        />
+      </svg>
+      <div
+          v-for="(item, index) in onboardingList"
+          :key="index"
+          :id="`item-${index}`"
+          class="item-box"
+          :style="{
                 top: boxPositions[index] && boxPositions[index].top ? boxPositions[index].top + 'px' : '0px',
                 left: boxPositions[index] && boxPositions[index].left ? boxPositions[index].left + 'px' : '0px'
               }"
-            @mousedown="startDrag(index, $event)"
-            :class="{
+          @mousedown="startDrag(index, $event)"
+          :class="{
               'first-item': index === 0,
               'last-item': index === onboardingList.length - 1
             }"
-        >
-          <div class="item-box-inner">
-            <div class="item-header">
-              <div class="templateTitle">{{ item.templateTitle }}</div>
-            </div>
-            <div
-                class="item-content"
-                :class="{ completed: item.onboardingCompletedStatus, 'checklist-item-box-container': item.templateType === 'CHECKLIST'}">
-              <div class="templateDetail">{{ item.templateSub }}</div>
-              <div v-if="item.templateType === 'CHECKLIST'" class="checklist-bigBox">
-                <div
-                    v-if="Array.isArray(item.checklistContent) && item.checklistContent.length > 0"
-                    class="checklist-container">
-                  <div class="checklist-content" v-for="(content, index) in item.checklistContent" :key="index">
-                    <label class="checklist-label">
-                      <input
-                          type="checkbox"
-                          class="checklist-checkbox"
-                          :checked="content.listCheckedStatus"
-                          @change="toggleChecklistStatus(item, content) "
-                      />
-                    </label>
-                    <div class="checklist-inner">{{ content.checklistContent }}</div>
-                  </div>
-                </div>
-                <div v-else>
-                  <div class="templateContent">{{ item.checklistContent || '체크리스트 항목이 없습니다.' }}</div>
+      >
+        <div class="item-box-inner">
+          <div class="item-header">
+            <div class="templateTitle">{{ item.templateTitle }}</div>
+          </div>
+          <div
+              class="item-content"
+              :class="{ completed: item.onboardingCompletedStatus, 'checklist-item-box-container': item.templateType === 'CHECKLIST'}">
+            <div class="templateDetail">{{ item.templateSub }}</div>
+            <div v-if="item.templateType === 'CHECKLIST'" class="checklist-bigBox">
+              <div
+                  v-if="Array.isArray(item.checklistContent) && item.checklistContent.length > 0"
+                  class="checklist-container">
+                <div class="checklist-content" v-for="(content, index) in item.checklistContent" :key="index">
+                  <label class="checklist-label">
+                    <input
+                        type="checkbox"
+                        class="checklist-checkbox"
+                        :checked="content.listCheckedStatus"
+                        @change="toggleChecklistStatus(item, content) "
+                    />
+                  </label>
+                  <div class="checklist-inner">{{ content.checklistContent }}</div>
                 </div>
               </div>
               <div v-else>
-                <div>
-                  <button
-                      v-if="item.fileName"
-                      class="template-download-button"
-                      @click="downloadFile(item.fileUrl, item.fileName)">
-                    🔗{{ item.fileName }}
-                  </button>
-                  <button class="template-button template-confirm-button" @click="openModal(item)">
-                    확인하기
-                  </button>
-                  <button
-                      v-if="(item.templateCheckRequiredStatus === true && employeeRole === 'MENTOR') || (item.templateCheckRequiredStatus === false && employeeRole === 'MENTEE')"
-                      class="template-button template-complete-button"
-                      @click="employeeRole === 'MENTOR' ? changeCompleteStatusMentor(item.templateSeq) : changeCompleteStatusMentee(item.templateSeq)">
-                    완료하기
-                  </button>
+                <div class="templateContent">{{ item.checklistContent || '체크리스트 항목이 없습니다.' }}</div>
+              </div>
+            </div>
+            <div v-else>
+              <div>
+                <button
+                    v-if="item.fileName"
+                    class="template-download-button"
+                    @click="downloadFile(item.fileUrl, item.fileName)">
+                  🔗{{ item.fileName }}
+                </button>
+                <button class="template-button template-confirm-button" @click="openModal(item)">
+                  확인하기
+                </button>
+                <button
+                    v-if="(item.templateCheckRequiredStatus === true && employeeRole === 'MENTOR' || item.templateCheckRequiredStatus === false && employeeRole === 'MENTEE') && !(item.templateType === 'TASK' || item.templateType === 'BREAK' || item.templateType === 'CF')"
+                    class="template-button template-complete-button"
+                    @click="employeeRole === 'MENTOR' ? changeCompleteStatusMentor(item.templateSeq) : changeCompleteStatusMentee(item.templateSeq)">
+                  완료하기
+                </button>
 
-                  <div v-if="isModalOpen" class="modal">
-                    <div class="modal-content" :style="modalContentStyle">
-                      <div v-if="selectedItem?.templateType === 'VIDEO'" class="video-modal">
-                        <h2>{{ selectedItem?.templateTitle }}</h2>
+                <div v-if="isModalOpen" class="modal">
+                  <div class="modal-content" :style="modalContentStyle">
+                    <div v-if="selectedItem?.templateType === 'VIDEO'" class="video-modal">
+                      <h2>{{ selectedItem?.templateTitle }}</h2>
 
-                        <!-- Spinner -->
-                        <div v-if="modalLoading" class="loading-spinner">
-                          <div class="spinner"></div>
-                          <p>로딩중...</p>
-                        </div>
-
-                        <iframe
-                            v-show="!modalLoading"
-                            class="iframe-main-page"
-                            @load="modalLoading = false"
-                            width="560"
-                            height="315"
-                            :src="`https://www.youtube.com/embed/${selectedItem.templateUrlName}`"
-                            title="YouTube video player"
-                            frameborder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowfullscreen
-                        ></iframe>
-                        <button @click="closeModal" class="close-button">닫기</button>
+                      <!-- Spinner -->
+                      <div v-if="modalLoading" class="loading-spinner">
+                        <div class="spinner"></div>
+                        <p>로딩중...</p>
                       </div>
-                      <div v-else>
-                        <p>{{ selectedItem.templateDetail }}</p>
-                        <div class="onboarding-button-container">
-                          <button
-                              v-if="selectedItem && selectedItem.taskSeq !== null"
-                              @click="employeeRole === 'MENTOR' ? goToTaskReviewPage(selectedItem) : goToTaskPage(selectedItem)"
-                              class="check-task-button"
-                          >
-                            과제확인
-                          </button>
-                          <button
-                              v-if="selectedItem.taskGroupSeq !== null"
-                              @click="goToGroupEvalPage"
-                              class="cw-eval-button"
-                          >
-                            동료평가
-                          </button>
-                          <button
-                              v-if="selectedItem.templateType === 'QUIZ'"
-                              @click="goToQuiz(selectedItem.quizCategorySeq)"
-                              class="go-to-quiz-button"
-                          >
-                            퀴즈
-                          </button>
-                          <button
-                              v-if="selectedItem.templateType === 'CF'"
-                              @click="goToCF"
-                              class="go-to-CF-button"
-                          >
-                            회의실 예약
-                          </button>
-                          <button
-                              v-if="selectedItem.templateType === 'BREAK'"
-                              @click="goToBreak"
-                              class="go-to-Break-button"
-                          >
-                            휴가 신청
-                          </button>
-                          <button @click="closeModal" class="close-button">닫기</button>
-                        </div>
+
+                      <iframe
+                          v-show="!modalLoading"
+                          class="iframe-main-page"
+                          @load="modalLoading = false"
+                          width="560"
+                          height="315"
+                          :src="`https://www.youtube.com/embed/${selectedItem.templateUrlName}`"
+                          title="YouTube video player"
+                          frameborder="0"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowfullscreen
+                      ></iframe>
+                      <button @click="closeModal" class="close-button">닫기</button>
+                    </div>
+                    <div v-else>
+                      <p>{{ selectedItem.templateDetail }}</p>
+                      <div class="onboarding-button-container">
+                        <button
+                            v-if="selectedItem && selectedItem.taskSeq !== null"
+                            @click="employeeRole === 'MENTOR' ? goToTaskReviewPage(selectedItem) : goToTaskPage(selectedItem)"
+                            class="check-task-button"
+                        >
+                          과제확인
+                        </button>
+                        <button
+                            v-if="selectedItem.taskGroupSeq !== null"
+                            @click="goToGroupEvalPage"
+                            class="cw-eval-button"
+                        >
+                          동료평가
+                        </button>
+                        <button
+                            v-if="selectedItem.templateType === 'QUIZ'"
+                            @click="goToQuiz(selectedItem.quizCategorySeq)"
+                            class="go-to-quiz-button"
+                        >
+                          퀴즈
+                        </button>
+                        <button
+                            v-if="selectedItem.templateType === 'CF'"
+                            @click="goToCF"
+                            class="go-to-CF-button"
+                        >
+                          회의실 예약
+                        </button>
+                        <button
+                            v-if="selectedItem.templateType === 'BREAK'"
+                            @click="goToBreak"
+                            class="go-to-Break-button"
+                        >
+                          휴가 신청
+                        </button>
+                        <button @click="closeModal" class="close-button">닫기</button>
                       </div>
                     </div>
                   </div>
@@ -632,7 +653,7 @@ onMounted(async () => {
           </div>
         </div>
       </div>
-      <div class="bar2"/>
     </div>
+    <div class="bar2"/>
   </div>
 </template>

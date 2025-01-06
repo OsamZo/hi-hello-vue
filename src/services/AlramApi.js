@@ -14,3 +14,7 @@ export const readNoti = (notiSeq) => {
 export const deleteNoti = (notiSeq) => {
     return springAPI.delete(`notify/${notiSeq}`);
 }
+
+// 읽지않은 알림 개수 조회
+export const getAlarmCount = () => {
+    return springAPI.get(`/notify/list/count`)}

@@ -5,17 +5,16 @@
     font-weight: bold; /* 글씨 두껍게 */
 }
 
-.header{
+.header-task{
     display: flex;
     flex-direction: column;
     align-items: center;
-
 }
 
 .task-list-page-container .user-roll{
     margin:0 0 13px 0;
 }
-.task-list-page-container .search-bar {
+.task-list-page-container .search-bar-task {
     width: 900px;
     display: flex;
     margin:0 0 21px 0;

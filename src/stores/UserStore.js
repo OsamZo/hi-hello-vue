@@ -56,7 +56,7 @@ export const useUserStore = defineStore('user', {
             const performLogout = async () => {
                 // console.log('엑세스 토큰 : ' + this.accessToken);
                 if (!this.accessToken) {
-                    console.warn("이미 로그아웃된 상태입니다.");
+                    // console.warn("이미 로그아웃된 상태입니다.");
                     return;
                 }
 
@@ -65,7 +65,7 @@ export const useUserStore = defineStore('user', {
                     await springAPI.post("/employee/logout");
 
                 } catch (error) {
-                    console.error('Server logout failed:', error.response?.data || error.message);
+                    // console.error('Server logout failed:', error.response?.data || error.message);
                 } finally {
                     this.accessToken = null;
                     this.refreshToken = null;
@@ -82,14 +82,14 @@ export const useUserStore = defineStore('user', {
                         route.push('/').then(() => {
                             alert('로그아웃 되었습니다.');
                         }).catch((error) => {
-                            console.error("Navigation failed:", error);
+                            // console.error("Navigation failed:", error);
                         });
                     }
                 }
             }
             // 로그아웃 로딩 스피너 처리
             performLogout().finally(() => {
-                console.log('User logged out.');
+                // console.log('User logged out.');
             });
         },
         initializeInterceptors() {
@@ -99,7 +99,7 @@ export const useUserStore = defineStore('user', {
             springAPI.interceptors.response.use(
                 (response) => response,
                 async (error) => {
-                    console.log(error.response.data.message);
+                    // console.log(error.response.data.message);
                     if (error.response?.data.message === '엑세스 토큰이 만료되었습니다.') {
                         try {
                             const res = await springAPI.request({
@@ -110,26 +110,46 @@ export const useUserStore = defineStore('user', {
                                 }
                             });
 
+                            // 응답 헤더 로깅
+                            // console.log('토큰 재발급 응답 헤더:', res.headers);
+                            // console.log('새로 받은 액세스 토큰:', res.headers['accesstoken']);
+
+                            // 2. 토큰 저장 작업을 순차적으로 처리
+                            // 상태 업데이트
                             this.accessToken = res.headers['accesstoken'];
                             this.refreshToken = res.headers['refreshtoken'];
 
+                            // localStorage 업데이트
                             localStorage.setItem('accessToken', this.accessToken);
                             localStorage.setItem('refreshToken', this.refreshToken);
 
+                            // axios 기본 헤더 설정
                             springAPI.defaults.headers.common['Authorization'] = `Bearer ${this.accessToken}`;
 
-                            // 수정된 부분: 원래 요청을 새로운 액세스 토큰으로 재시도
+                            // 토큰 설정 검증
+                            // if (!this.accessToken) {
+                            //     console.log('토큰이 제대로 설정되지 않았습니다.');
+                            // }
+
+                            // 약간의 지연시간 추가 (선택적)
+                            await new Promise(resolve => setTimeout(resolve, 200));
+
+                            // console.log('재요청 직전 토큰 확인:', this.accessToken);
+
+                            // 재요청 실행
                             return await springAPI.request({
-                                method: error.config.method,
-                                url: error.config.url,
-                                data: error.config.data,
-                            });
+                                    method: error.config.method,
+                                    url: error.config.url,
+                                    data: error.config.data,
+                                    headers: {
+                                        'Authorization': `Bearer ${this.accessToken}`,
+                                        'Content-Type': error.config.headers['Content-Type']
+                                    }
+                                });
 
                         } catch (err) {
-                            console.error('인터셉터 과정 중 에러 발생:', err);
-                            alert('세션이 만료되었습니다. 다시 로그인해주세요.');
                             this.logout();
-                            await route.push("/");
+                            alert('세션이 만료되었습니다. 다시 로그인해주세요.');
                             return Promise.reject(err);
                         }
                     }

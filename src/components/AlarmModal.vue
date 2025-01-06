@@ -4,13 +4,14 @@ import {deleteNoti, getAlarmList, readNoti} from "@/services/AlramApi.js";
 import {springAPI} from "@/services/axios.js";
 import {useUserStore} from "@/stores/UserStore.js";
 import router from "@/router/index.js";
+import {useNotificationStore} from "@/stores/NotificationStore.js";
 
 const alarms = ref(null);
+const notificationStore = useNotificationStore();
 
 const fetchAlarmList = async () => {
   try {
     const response = await getAlarmList();
-    console.log(response.data.data);
     if (response.data.data.length === 0) {
       alarms.value = null;
     } else {
@@ -32,6 +33,7 @@ const isReadStatus = async (notiSeq) => {
       }
       return alarm;
     });
+    await notificationStore.updateNotiCount();
   } catch (error) {
     console.error('알람 읽음 처리 중 오류 발생', error);
   }

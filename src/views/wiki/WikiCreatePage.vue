@@ -20,7 +20,7 @@
 <script setup>
 // 서버로 이미지 파일을 업로드
 import Editor from '@/components/EditorComponent.vue';
-import {createWiki} from "@/services/WikiApi.js";
+import {createWiki, indexWiki} from "@/services/WikiApi.js";
 import {ref} from "vue";
 import router from "@/router/index.js";
 
@@ -44,6 +44,8 @@ const creatingWiki = async () => {
         console.error("위키 생성 도중 오류가 발생했습니다.", error);
         alert("위키 생성 도중 오류가 발생했습니다.");
       })
+
+  await indexWiki();
 
   await router.push(`/wiki`);
 }

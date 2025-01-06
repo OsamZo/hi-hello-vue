@@ -23,10 +23,6 @@ const employeeInfo = useUserStore().getEmployeeInfo();
 const employeeRole = employeeInfo.employeeRole;
 const employeePositionName = employeeInfo.employeePositionName;
 
-
-console.log(employeeRole[0]);
-console.log(employeePositionName);
-
 // 검색 처리 함수
 const handleSearch = async (keyword) => {
   loading.value = true;
@@ -60,7 +56,9 @@ const handleSearch = async (keyword) => {
     }
     reports.value = response.value.data.data;
   } catch (error) {
-    console.error('검색 중 오류 발생:', error);
+    // console.error('검색 중 오류 발생:', error);
+    alert('검색 중 오류가 발생하였습니다.');
+    location.reload();
   } finally {
     loading.value = false;
   }
@@ -106,7 +104,7 @@ onMounted(async () => {
       <ListComponent :items="reports">
         <template #header>
           <div class="header-item">순서</div>
-          <div class="header-item">주차</div>
+          <div class="header-item">제목</div>
           <div class="header-item" v-if="employeeRole[0] !== 'MENTEE' && employeeRole[0] !== 'MENTOR'">작성자</div>
           <div class="header-item">제출날짜</div>
         </template>
@@ -114,7 +112,7 @@ onMounted(async () => {
         <template #item="{ item, index }">
           <div @click="goToDetail(item.reportSeq)" class="list-row">
             <div class="list-cell">{{ index + 1 }}</div>
-            <div class="list-cell">{{ item.reportWeek }}</div>
+            <div class="list-cell">{{ item.reportWeek }} 주차 보고서</div>
             <div class="list-cell" v-if="employeeRole[0] !== 'MENTEE' && employeeRole[0] !== 'MENTOR'">
               {{ item.menteeName }}
             </div>
@@ -159,6 +157,7 @@ onMounted(async () => {
   border-radius: 10px;
   width: 100px;
   height: 50px;
+  cursor: pointer;
 }
 
 .create-box {

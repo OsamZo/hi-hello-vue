@@ -14,7 +14,7 @@ export const setMaxTemplateProcedure = () => {
     maxTemplateProcedure.value = templateList.value.reduce((max, current) => {
         return current.templateProcedure > max ? current.templateProcedure : max;
     }, 0);  // 기본값 0 설정
-    console.log("Updated maxTemplateProcedure:", maxTemplateProcedure.value); // 디버깅 로그
+    // console.log("Updated maxTemplateProcedure:", maxTemplateProcedure.value); // 디버깅 로그
 };
 
 // 템플릿 리스트 불러오기 함수
@@ -25,17 +25,17 @@ export const loadTemplates = async () => {
 
         // 템플릿 리스트가 갱신된 후, 가장 큰 templateProcedure 값을 갱신
         setMaxTemplateProcedure();
-        console.log("가장 큰 templateProcedure 값:", maxTemplateProcedure.value);
+        // console.log("가장 큰 templateProcedure 값:", maxTemplateProcedure.value);
 
     } catch (error) {
-        console.error('템플릿 목록 로드 중 오류:', error);
+        // console.error('템플릿 목록 로드 중 오류:', error);
     }
 };
 
 // 템플릿 데이터를 리셋하는 함수
 export const resetTemplateData = () => {
     setMaxTemplateProcedure(); // 항상 최신화된 값 보장
-    console.log("Reset template with maxTemplateProcedure:", maxTemplateProcedure.value); // 디버깅 로그
+    // console.log("Reset template with maxTemplateProcedure:", maxTemplateProcedure.value); // 디버깅 로그
 
     // 템플릿 폼 초기화
     templateForm.value = {
@@ -66,7 +66,7 @@ export const updateTemplateProcedure = async (updatedTemplates) => {
         alert("템플릿 순서가 업데이트되었습니다.");
         await loadTemplates();  // 템플릿 리스트 새로 고침
     } catch (error) {
-        console.error("템플릿 순서 업데이트 실패:", error);
+        // console.error("템플릿 순서 업데이트 실패:", error);
         alert("템플릿 순서 업데이트에 실패했습니다.");
     }
 };
@@ -92,7 +92,7 @@ export const deleteTemplate = async (templateSeq, templateProcedure) => {
         alert("온보딩 스토리보드가 삭제되었습니다.");
     } catch (error) {
         alert("삭제에 실패했습니다.");
-        console.error("삭제 실패:", error);
+        // console.error("삭제 실패:", error);
     }
 };
 
@@ -112,7 +112,7 @@ export const submitTemplate = async () => {
     isFormValid.value = true;
     errorMessage.value = '';
 
-    console.log("Submit template maxTemplateProcedure:", maxTemplateProcedure.value); // 디버깅 로그
+    // console.log("Submit template maxTemplateProcedure:", maxTemplateProcedure.value); // 디버깅 로그
 
     const formData = new FormData();
     formData.append("createDTO", JSON.stringify({
@@ -143,7 +143,7 @@ export const submitTemplate = async () => {
         resetTemplateData();
         await loadTemplates(); // 템플릿 리스트 새로고침
     } catch (error) {
-        console.error('템플릿 저장 중 오류:', error);
+        // console.error('템플릿 저장 중 오류:', error);
         alert('템플릿 저장에 실패했습니다.');
     }
 };
@@ -221,5 +221,12 @@ export const drop = (event, index) => {
     event.preventDefault();
 };
 
-// 화면 로드시 템플릿 리스트 불러오기
-loadTemplates();
+export const fetchQuizCategory = async () => {
+    try {
+        const response = await springAPI.get(`/hr/quizCategory`)
+        return response.data;
+    } catch (error) {
+        // console.error("퀴즈 카테고리 조회 실패", error.response?.data || error.message);
+        throw error;
+    }
+};
