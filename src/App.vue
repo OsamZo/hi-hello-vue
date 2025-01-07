@@ -114,7 +114,7 @@ onMounted(() => {
     <ChatBotModal
         :isVisible="isChatBotModalVisible"
         @update:isVisible="isChatBotModalVisible = $event"
-        iframeSrc="http://192.168.1.11:8501/"
+        iframeSrc="https://driven-stallion-awake.ngrok-free.app"
     />
   </div>
 </template>
