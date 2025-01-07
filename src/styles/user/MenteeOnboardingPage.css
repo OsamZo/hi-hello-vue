@@ -37,7 +37,7 @@
     text-align: center;        /* 중앙 정렬 */
     width: 40%;                /* 박스의 가로 크기 설정 */
     box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.25);
-    z-index: 500;
+    z-index: 5;
 }
 
 .status-gauge-container {

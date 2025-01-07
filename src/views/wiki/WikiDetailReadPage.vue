@@ -88,6 +88,7 @@ const deletingWiki = async () => {
     const wikiSeq = route.params.wikiSeq;
     await deleteWiki(wikiSeq);
     alert("위키가 삭제되었습니다.");
+    await goBackToWikiList();
   } catch (error) {
     console.error("위키 삭제에 실패했습니다.");
     throw error;

@@ -139,7 +139,12 @@ const sendMessage = () => {
     roomId: roomId.value,
     userCode: currentUserCode,
     message: messageContent.value,
-    createdAt: new Date().toISOString(),
+    createdAt: (() => {
+      const now = new Date();
+      const offset = 9 * 60 * 60 * 1000; // UTC+9 (KST) 밀리초 단위
+      const kstDate = new Date(now.getTime() + offset);
+      return kstDate.toISOString();
+    })(),
   };
 
   if (stompClient.value && token) {
